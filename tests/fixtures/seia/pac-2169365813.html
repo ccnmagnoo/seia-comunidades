@@ -1,0 +1,273 @@
+        
+            <div style='display:none;'>
+     <button id="btn_actividades_de_pac" class=" bot_120px" type="button" onclick="document.location='/expediente/xhr_pac.php?id_expediente=2169371275'">Actividades de PAC</button>
+    <input type="hidden" id="url_pac_actividad" value="/expediente/xhr_pac.php?id_expediente=2169371275">
+    </div>
+        <p>
+        Estimado/a usuario/a, los documentos con el ícono <img src='/images/certd.gif' /> poseen firma electrónica. La versión disponible en este sitio web tiene validez legal.
+        <br>
+        El significado de los demás símbolos puede verlo <a class="color-primary" href="#seccion-simbologia">al final de esta página.</a></p>
+        <p>Para buscar un documento específico en la siguiente tabla, puede utilizar el buscador que se encuentra debajo de este texto. Tendrá la opción de usar filtros por folio, remitente o fecha de generación.</p>
+            <form class="sg-search-form" method="GET" onsubmit="
+        event.preventDefault();
+        alert("OK");
+        
+    ">
+   
+								  	<div class="row mb-3">
+										  
+										  <div class="col-md-4 col-sm-12">
+											  <input type="text" class="form-control" id="b_texto" placeholder="Palabra Clave" id="b_general" value="">
+										  </div>
+										  <div class="col-md-4 col-sm-12">
+												<input type="text" class="form-control" id="b_folio" placeholder="Folio" value="">
+										  </div>										  
+										  <div class="col-md-4 col-sm-12">
+												<input type="text" class="form-control" id="b_emisor" placeholder="Remitido por" value="">
+										  </div>
+										   
+								  	</div><!-- /.row -->
+									  
+								<div class="row gx-0 py-3">
+									 <label for="presentationDate" class="col-md-3 col-sm-12 col-form-label">Fecha de Generación</label>
+
+										<div class="col-md-9 col-sm-12">
+                                          <div class="row">
+                                            <div class="col-md-6 col-sm-12 inputDate">
+                                            <label for="b_f_desde" class="form-label">Desde</label>                                               
+											<div class="input-group">							  	
+												  <input type="text" class="form-control fecha_desde" placeholder="dd/mm/aaaa" aria-describedby="btnToGenerationDate" value="09/11/2021" id="b_f_desde">
+											</div>
+										    </div>
+
+                                        <div class="col-md-6 col-sm-12 inputDate">
+                                            <label for="b_f_hasta" class="form-label">Hasta</label>
+											<div class="input-group">							  	
+												  <input type="text" class="form-control fecha_hasta" placeholder="dd/mm/aaaa" aria-describedby="btnFromGenerationDate" value="09/11/2026" id="b_f_hasta">
+											</div>
+										</div>
+									</div><!-- /.row -->
+                                    </div>
+                                    </div>
+									
+									<div class="row">
+										
+										<div class="col-md-12 text-end">
+											<button type="button" class="btn sg-btnOutline-2 sg-btnForm" onclick="
+        event.preventDefault();
+        form_autofecha_hide_calendario_fecha();
+        cargaContenido('/expediente/xhr_documentos_pac.php?id_expediente=2169365813&incluyePac=2');
+    ">Restablecer filtros</button>
+											<button type="button" class="btn btn-primary-2 sg-btnForm" type="submit" onclick="
+        event.preventDefault();
+        form_autofecha_hide_calendario_fecha();
+        const gen=(document.getElementById('b_texto').value); 
+        const fol=(document.getElementById('b_folio').value); 
+        const emi=(document.getElementById('b_emisor').value); 
+        const f_d = moment(document.getElementById('b_f_desde').value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+        const f_h = moment(document.getElementById('b_f_hasta').value, 'DD/MM/YYYY').format('YYYY-MM-DD');
+    
+
+        const f_ind = moment(document.getElementById('b_f_desde').value, 'DD/MM/YYYY').format('DD/MM/YYYY');
+        const f_inh = moment(document.getElementById('b_f_hasta').value, 'DD/MM/YYYY').format('DD/MM/YYYY');
+
+       
+        cargaContenido('/expediente/xhr_documentos_pac.php?id_expediente=2169365813&incluyePac=2'+(gen?'&buscar='+gen:'')+(fol?'&bfolio='+fol:'')+(emi?'&bemisor='+emi:'')+(f_d?'&fdesde='+f_d:'')+(f_h?'&fhasta='+f_h:'')+'&finput_desde='+f_ind+'&finput_hasta='+f_inh);
+    ">Buscar</button>
+											
+										</div>
+										
+									</div><!-- /.row -->
+   </form>
+
+   
+       
+        
+    <table style="width:100%;"   class=" stripe nowrap compact cell-border tabla-dinamica_pac  ">
+        <thead>
+            <tr>
+                <th class='no-sort'>&nbsp;</th>
+                <th>N<sup>o</sup>&nbsp;</th>
+                <th>Folio</th>
+                <th>Documento&nbsp;</th>
+                <th>Remitido Por&nbsp;</th>
+                <th>Destinado A&nbsp;</th>
+                <th>
+                     
+                        Fecha de Generación/</br>Fecha de Of. Partes
+                    
+                </th>
+                <th>
+                Acciones
+                </th>
+            </tr>      
+        </thead>
+        <tbody>
+            
+        <tr class=impar>
+            <td align="right">1</td>
+            <td align="right"></td>
+            <td>2026-05-137-4</td>
+            <td class='td-primary'><a href='https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169407570' target='_blank' >Notificación de documento</a><img src='/images/certd.gif' align=absmiddle title='Firmado con certificado digital acreditado'></td>
+            <td>Servicio Evaluación Ambiental, Región de Valparaíso</td>
+            <td class='td-primary'><a href='javascript:ventana("/documentos/verDestinatarios.php?id_documento=2169407570", false, 750)'>3 destinatarios</a></td>
+            <td  class='dt-type-numeric'>21/08/2026 15:57:44</td>
+            <td  >    	<div class="sg-action-button d-flex justify-content-center align-items-center">
+			        <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+                data-bs-placement="top" data-bs-title="Ver Documento"
+                onclick="window.open('https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169407570', '_blank')"><img class="sg-icon" src="/img/icons/go_to_project.svg"></button>
+             
+                  <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+      onclick='ventana("/documentos/verDestinatarios.php?id_documento=2169407570", false, 750)' 
+      data-bs-placement="top" data-bs-title="Ver Destinatarios">
+         <img class="sg-icon" src="/template/default/gob/img/icons/see_recipients.svg"></button>  
+		 </div></td>
+            
+        </tr>
+        <tr class=par>
+            <td align="right">2</td>
+            <td align="right"></td>
+            <td>2026-05-137-10</td>
+            <td class='td-primary'><a href='https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169442815' target='_blank' >Notificación de documento</a><img src='/images/certd.gif' align=absmiddle title='Firmado con certificado digital acreditado'></td>
+            <td>Servicio Evaluación Ambiental, Región de Valparaíso</td>
+            <td class='td-primary'>Matthieu Florent Victor BARBE</td>
+            <td  class='dt-type-numeric'>26/08/2026 14:57:29</td>
+            <td  >    	<div class="sg-action-button d-flex justify-content-center align-items-center">
+			        <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+                data-bs-placement="top" data-bs-title="Ver Documento"
+                onclick="window.open('https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169442815', '_blank')"><img class="sg-icon" src="/img/icons/go_to_project.svg"></button>
+             
+             
+		 </div></td>
+            
+        </tr>
+        <tr class=impar>
+            <td align="right">3</td>
+            <td align="right"></td>
+            <td></td>
+            <td class='td-primary'><a href='https://seia.sea.gob.cl/archivos/2026/09/01/DO.pdf' target='_blank'  title='Documento digital (id_documento=2169510930)'>Registro de publicación en Diario Oficial</a><img src='/images/ap.gif' align=absmiddle title='El documento es un archivo digital'><a target="_blank" href='/elementosFisicos/enviados.php?id_documento=2169510930'><img src='/images/attach2.gif' align=absmiddle  border=0 title='Ver anexos ingresados junto al documento (1)'></a></td>
+            <td>Servicio de Evaluación Ambiental Dirección Ejecutiva</td>
+            <td class='td-primary'><a href='javascript:ventana("/documentos/verDestinatarios.php?id_documento=2169510930", false, 750)'>23 destinatarios</a></td>
+            <td  class='dt-type-numeric'>01/09/2026 15:48:10</td>
+            <td  >    	<div class="sg-action-button d-flex justify-content-center align-items-center">
+			        <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+                data-bs-placement="top" data-bs-title="Ver Documento"
+                onclick="window.open('https://seia.sea.gob.cl/archivos/2026/09/01/DO.pdf', '_blank')"><img class="sg-icon" src="/img/icons/go_to_project.svg"></button>
+                     <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip"
+          onclick='window.open("/elementosFisicos/enviados.php?id_documento=2169510930"  ,"_blank" )' 
+          data-bs-placement="top" data-bs-title="Ver Anexos">
+          <img class="sg-icon" src="/template/default/gob/img/icons/see_annexes.svg"></button>
+  
+                  <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+      onclick='ventana("/documentos/verDestinatarios.php?id_documento=2169510930", false, 750)' 
+      data-bs-placement="top" data-bs-title="Ver Destinatarios">
+         <img class="sg-icon" src="/template/default/gob/img/icons/see_recipients.svg"></button>  
+		 </div></td>
+            
+        </tr>
+        <tr class=par>
+            <td align="right">4</td>
+            <td align="right"></td>
+            <td>2026-05-137-49</td>
+            <td class='td-primary'><a href='https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169608593' target='_blank' >Acreditación aviso radial</a></td>
+            <td>Servicio Evaluación Ambiental, Región de Valparaíso</td>
+            <td class='td-primary'></td>
+            <td  class='dt-type-numeric'>15/09/2026 10:17:05</td>
+            <td  >    	<div class="sg-action-button d-flex justify-content-center align-items-center">
+			        <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+                data-bs-placement="top" data-bs-title="Ver Documento"
+                onclick="window.open('https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169608593', '_blank')"><img class="sg-icon" src="/img/icons/go_to_project.svg"></button>
+             
+             
+		 </div></td>
+            
+        </tr>
+        <tr class=impar>
+            <td align="right">5</td>
+            <td align="right"></td>
+            <td>2026-05-137-59</td>
+            <td class='td-primary'><a href='https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169772901' target='_blank' >Notificación de documento</a><img src='/images/certd.gif' align=absmiddle title='Firmado con certificado digital acreditado'></td>
+            <td>Servicio Evaluación Ambiental, Región de Valparaíso</td>
+            <td class='td-primary'><a href='javascript:ventana("/documentos/verDestinatarios.php?id_documento=2169772901", false, 750)'>3 destinatarios</a></td>
+            <td  class='dt-type-numeric'>05/10/2026 20:01:01</td>
+            <td  >    	<div class="sg-action-button d-flex justify-content-center align-items-center">
+			        <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+                data-bs-placement="top" data-bs-title="Ver Documento"
+                onclick="window.open('https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2169772901', '_blank')"><img class="sg-icon" src="/img/icons/go_to_project.svg"></button>
+             
+                  <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+      onclick='ventana("/documentos/verDestinatarios.php?id_documento=2169772901", false, 750)' 
+      data-bs-placement="top" data-bs-title="Ver Destinatarios">
+         <img class="sg-icon" src="/template/default/gob/img/icons/see_recipients.svg"></button>  
+		 </div></td>
+            
+        </tr>
+        <tr class=par>
+            <td align="right">6</td>
+            <td align="right"></td>
+            <td>2026-05-137-66</td>
+            <td class='td-primary'><a href='https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2170005113' target='_blank' >Notificación de documento</a><img src='/images/certd.gif' align=absmiddle title='Firmado con certificado digital acreditado'></td>
+            <td>Servicio Evaluación Ambiental, Región de Valparaíso</td>
+            <td class='td-primary'><a href='javascript:ventana("/documentos/verDestinatarios.php?id_documento=2170005113", false, 750)'>6 destinatarios</a></td>
+            <td  class='dt-type-numeric'>30/10/2026 18:21:25</td>
+            <td  >    	<div class="sg-action-button d-flex justify-content-center align-items-center">
+			        <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+                data-bs-placement="top" data-bs-title="Ver Documento"
+                onclick="window.open('https://seia.sea.gob.cl/documentos/documento.php?idDocumento=2170005113', '_blank')"><img class="sg-icon" src="/img/icons/go_to_project.svg"></button>
+             
+                  <button class="btn btn-primary-2 sg-btn-table" data-bs-toggle="tooltip" 
+      onclick='ventana("/documentos/verDestinatarios.php?id_documento=2170005113", false, 750)' 
+      data-bs-placement="top" data-bs-title="Ver Destinatarios">
+         <img class="sg-icon" src="/template/default/gob/img/icons/see_recipients.svg"></button>  
+		 </div></td>
+            
+        </tr>
+        </tbody>
+    </table> 
+        <br>
+        <!-- simbología anterior
+
+        <p style="text-align:center" ></p> 
+        <h3 id="seccion-simbologia" style="padding-top: 10px;">Simbología</h3>
+        <blockquote>
+        <img src='/images/certd.gif' />
+        <font size=1>El documento posee firma electrónica. La versión disponible en este sitio web tiene validez legal.</font><br/>
+        <img src='/images/attach2.gif' />
+        <font size=1>El documento posee anexos que se pueden descargar haciendo clic en el ícono.</font><br/>
+        <img src='/images/emulado.gif' />
+        <font size=1>El documento fue presentado en papel por el titular y cargado al sistema electrónico.</font><br/>
+        <img src='/images/ap.gif' />
+        <font size=1>Documento presentado en papel, digitalizado y publicado en sistema electrónico.</font><br/>
+        <img src='/images/leaf.gif' />
+        <font size=1>Referencia de documento en papel.</font><br/>
+        <img src='/images/leafInactivo.gif' />
+        <font size=1>Documento invalidado.</font><br/>
+        <img src='/images/leafR.gif' />
+        <font size=1>Documento rectificatorio.</font><br/>
+        <img src='/images/rectificacion.gif' />
+        <font size=1>Documento rectificado.</font><br/>
+        <font size=1 color='#FF0000'>S/E</font>
+        <font size=1>Documento Sin Efecto por Recurso Judicial.</font><br/>
+        <img src='/images/danado.png'>
+        <font size=1>El documento posee un archivo dañado que fue reemplazado.</font><br/>
+        </blockquote>-->
+
+        <div class="col-md-12 pb-3">                              
+        <div class="sg-file-info" id="seccion-simbologia">                         
+            <h4 class="mb-3 mt-3 sg-simbologia" style="font-size: 16px;">Simbología</h4>
+                <ul class="sg-simbology">
+                    <li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/certd.gif" alt="Firmado con certificado digital acreditado">El documento posee firma electrónica. La versión disponible en este sitio web tiene validez legal.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/attach2.gif" alt="Ver anexos ingresados junto al documento (2)">El documento posee anexos que se pueden descargar haciendo clic en el ícono.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/emulado.gif" alt="Icono Documento">El documento fue presentado en papel por el titular y cargado al sistema electrónico.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/ap.gif" alt="Icono Documento">Documento presentado en papel, digitalizado y publicado en sistema electrónico.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/leaf.gif" alt="Icono Documento">Referencia de documento en papel.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/leafInactivo.gif" alt="Icono Documento">Documento invalidado.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/leafR.gif" alt="Icono Documento">Documento rectificatorio.</li>
+					<li class="d-flex align-items-center"><span class="text-danger small fw-bold me-2 mt-2 mb-2">S/E</span>Documento Sin Efecto por Recurso Judicial.</li>
+					<li class="d-flex align-items-center"><img class="me-2" src="/img/icons/sea/danado.png" alt="Icono Documento">El documento posee un archivo dañado que fue reemplazado.</li>
+				</ul>
+        </div>
+                              
+    </div>
+        
+        

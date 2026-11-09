@@ -1,0 +1,8 @@
+---
+import Layout from '../layouts/Layout.astro';
+import DashboardIsland from '../../islands/DashboardIsland';
+---
+
+<Layout title="Dashboard">
+  <DashboardIsland client:only="react" />
+</Layout>

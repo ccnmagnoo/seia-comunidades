@@ -1,0 +1,16 @@
+node_modules/
+dist/
+dist-electron/
+release/
+.astro/
+data/
+cache/
+indexes/
+exports/
+reports/
+logs/
+*.log
+.env
+.env.local
+.DS_Store
+Thumbs.db

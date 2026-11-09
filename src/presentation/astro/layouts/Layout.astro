@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import GlobalSearchIsland from '../../islands/GlobalSearchIsland';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'Monitoreo y análisis de procesos PAC del SEIA' } = Astro.props;
+const pathname = Astro.url.pathname;
+const nav = [
+  { href: '/', label: 'Dashboard', hint: 'KPIs y actividad' },
+  { href: '/projects', label: 'Proyectos', hint: 'Expedientes y PAC' },
+  { href: '/settings', label: 'Configuración', hint: 'Rutas y filtros' },
+];
+const csp = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https://*.tile.openstreetmap.org",
+  "connect-src 'self' ws: wss: http: https:",
+  "font-src 'self' data:",
+  "frame-src 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+].join('; ');
+---
+
+<!doctype html>
+<html lang="es-CL">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content={csp} />
+    <meta name="description" content={description} />
+    <title>{title} · SEIA Comunidades</title>
+  </head>
+  <body>
+    <div class="flex min-h-screen">
+      <aside class="flex w-64 shrink-0 flex-col border-r border-white/8 bg-slate-950/70 px-4 py-6 backdrop-blur">
+        <a href="/" class="mb-8 flex items-center gap-3 px-2">
+          <span class="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-sky-400 to-violet-500 text-lg font-black text-slate-950 shadow-lg shadow-sky-500/20">
+            S
+          </span>
+          <span>
+            <span class="block text-sm font-semibold tracking-tight text-white">SEIA Comunidades</span>
+            <span class="block text-[11px] uppercase tracking-[0.18em] text-slate-500">Inteligencia PAC</span>
+          </span>
+        </a>
+
+        <GlobalSearchIsland client:only="react" />
+
+        <nav class="space-y-1">
+          {nav.map((item) => {
+            const active = item.href === '/' ? pathname === '/' : pathname.startsWith(item.href);
+            return (
+              <a
+                href={item.href}
+                class:list={[
+                  'group flex items-center justify-between rounded-xl px-3 py-2.5 text-sm transition',
+                  active
+                    ? 'bg-sky-500/12 text-sky-200 ring-1 ring-inset ring-sky-400/20'
+                    : 'text-slate-400 hover:bg-white/5 hover:text-slate-100',
+                ]}
+              >
+                <span>{item.label}</span>
+                <span class="text-[10px] uppercase tracking-wider text-slate-600 group-hover:text-slate-500">
+                  {item.hint}
+                </span>
+              </a>
+            );
+          })}
+        </nav>
+
+        <div class="mt-8 rounded-2xl border border-white/8 bg-white/[0.03] p-3">
+          <p class="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">Almacenamiento</p>
+          <p class="mt-2 text-xs leading-relaxed text-slate-400">
+            Archivos TOML locales, auditables y versionables. Sin nube.
+          </p>
+        </div>
+
+        <div class="mt-auto px-2 pt-8">
+          <p class="text-[11px] text-slate-600">SEIA Comunidades · v0.1</p>
+          <p class="mt-1 text-[11px] text-slate-600">Datos públicos del portal SEIA</p>
+        </div>
+      </aside>
+
+      <main class="min-w-0 flex-1">
+        <div class="mx-auto max-w-[1500px] px-8 py-8">
+          <slot />
+        </div>
+      </main>
+    </div>
+  </body>
+</html>

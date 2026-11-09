@@ -1,0 +1,39 @@
+[app]
+name = "SEIA Comunidades"
+locale = "es-CL"
+timezone = "America/Santiago"
+
+[seia]
+base_url = "https://seia.sea.gob.cl"
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36 SEIA-Comunidades/0.1"
+timeout_ms = 30000
+max_retries = 3
+concurrency = 2
+delay_ms = 350
+default_region_ids = ["5"]
+default_sector_ids = ["7"]
+default_status_ids = ["3"]
+
+[seia.endpoints]
+projects = "/busqueda/buscarProyectoResumenAction.php"
+search_page = "/busqueda/buscarProyecto.php"
+project_sheet = "/expediente/ficha/fichaPrincipal.php"
+records = "/expediente/xhr_expediente.php"
+pac_documents = "/expediente/xhr_documentos_pac.php"
+pac_activities = "/expediente/xhr_pac.php"
+schedule = "/expediente/newPlazos.php"
+document_receivers = "/documentos/verDestinatarios.php"
+representative_point = "/mapa/visualizacion/PuntoRepresentativo/index.php"
+project_file = "/expediente/expediente.php"
+
+[seia.cache_ttl_hours]
+projects = 24
+pac = 6
+documents = 12
+maps = 168
+closed = 720
+
+[sync]
+page_limit = 200
+max_pages = 25
+fetch_document_content = true
