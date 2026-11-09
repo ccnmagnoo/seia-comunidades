@@ -160,7 +160,7 @@ function ProjectDetailContent() {
   if (detail.isError) {
     return (
       <div className="space-y-4">
-        <a href="/projects" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-100">
+        <a href="/projects" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
           <ArrowLeft className="h-4 w-4" />
           Volver a proyectos
         </a>
@@ -174,7 +174,7 @@ function ProjectDetailContent() {
 
   return (
     <div className="space-y-6">
-      <a href="/projects" className="inline-flex items-center gap-2 text-sm text-slate-400 hover:text-slate-100">
+      <a href="/projects" className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
         <ArrowLeft className="h-4 w-4" />
         Volver a proyectos
       </a>
@@ -187,20 +187,20 @@ function ProjectDetailContent() {
             <Badge variant="slate">Expediente {project.id}</Badge>
             {project.tracking.critical ? <Badge variant="red">Crítico</Badge> : null}
           </div>
-          <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-white text-balance">
+          <h1 className="mt-3 max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-foreground text-balance">
             {project.name}
           </h1>
-          <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-slate-400">
+          <p className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
             <span className="inline-flex items-center gap-1.5">
-              <Building2 className="h-4 w-4 text-slate-600" />
+              <Building2 className="h-4 w-4 text-muted-foreground/70" />
               {project.owner.name}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <MapPin className="h-4 w-4 text-slate-600" />
+              <MapPin className="h-4 w-4 text-muted-foreground/70" />
               {project.location.commune}, {project.location.region}
             </span>
             <span className="inline-flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-slate-600" />
+              <Clock className="h-4 w-4 text-muted-foreground/70" />
               Actualizado {formatRelative(project.updatedAt)}
             </span>
           </p>
@@ -214,7 +214,7 @@ function ProjectDetailContent() {
             onClick={() => tracking.mutate({ favorite: !project.tracking.favorite })}
           >
             <Star
-              className={project.tracking.favorite ? 'h-4 w-4 fill-amber-300 text-amber-300' : 'h-4 w-4'}
+              className={project.tracking.favorite ? 'h-4 w-4 fill-warning text-warning' : 'h-4 w-4'}
             />
           </Button>
           <Button
@@ -224,7 +224,7 @@ function ProjectDetailContent() {
             onClick={() => tracking.mutate({ critical: !project.tracking.critical })}
           >
             <AlertTriangle
-              className={project.tracking.critical ? 'h-4 w-4 text-rose-300' : 'h-4 w-4'}
+              className={project.tracking.critical ? 'h-4 w-4 text-destructive' : 'h-4 w-4'}
             />
           </Button>
           <Button variant="secondary" onClick={() => openExternal(project.links.sheet)}>
@@ -250,7 +250,7 @@ function ProjectDetailContent() {
         <Alert tone="error">No fue posible sincronizar el expediente: {sync.error.message}</Alert>
       ) : null}
 
-      <div className="flex flex-wrap gap-1 rounded-xl border border-white/8 bg-white/[0.02] p-1">
+      <div className="flex flex-wrap gap-1 rounded-xl border border-border bg-muted/20 p-1">
         {TABS.map((item) => (
           <button
             key={item.id}
@@ -258,8 +258,8 @@ function ProjectDetailContent() {
             onClick={() => setTab(item.id)}
             className={
               tab === item.id
-                ? 'rounded-lg bg-sky-500/15 px-3.5 py-2 text-xs font-semibold text-sky-200 ring-1 ring-inset ring-sky-400/20'
-                : 'rounded-lg px-3.5 py-2 text-xs font-medium text-slate-400 hover:bg-white/5 hover:text-slate-200'
+                ? 'rounded-lg bg-primary/15 px-3.5 py-2 text-xs font-semibold text-primary ring-1 ring-inset ring-primary/20'
+                : 'rounded-lg px-3.5 py-2 text-xs font-medium text-muted-foreground hover:bg-accent hover:text-foreground'
             }
           >
             {item.label}
@@ -288,7 +288,7 @@ function SummaryTab({ project, projectId }: { project: Project; projectId: strin
           <CardDescription>Texto extraído de la ficha pública del SEIA.</CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="whitespace-pre-line text-sm leading-6 text-slate-300">
+          <p className="whitespace-pre-line text-sm leading-6 text-foreground/90">
             {project.details.description || 'Sin descripción almacenada. Sincroniza los detalles del expediente.'}
           </p>
           <div className="mt-5 grid gap-3 sm:grid-cols-2">
@@ -337,7 +337,7 @@ function SummaryTab({ project, projectId }: { project: Project; projectId: strin
             <CardTitle>Seguimiento</CardTitle>
             <CardDescription>Marcas y etiquetas locales.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-3 text-sm text-slate-400">
+          <CardContent className="space-y-3 text-sm text-muted-foreground">
             <div className="flex items-center justify-between">
               <span>Favorito</span>
               <Badge variant={project.tracking.favorite ? 'amber' : 'slate'}>
@@ -446,10 +446,10 @@ function PacTab({ documents }: { documents: PacDocument[] }) {
         <CardDescription>{documents.length} registros recuperados desde el SEIA.</CardDescription>
       </CardHeader>
       <CardContent className="pt-4">
-        <div className="overflow-x-auto rounded-xl border border-white/8">
+        <div className="overflow-x-auto rounded-xl border border-border">
           <table className="w-full text-left text-sm">
-            <thead className="bg-white/[0.03]">
-              <tr className="text-[10px] uppercase tracking-[0.16em] text-slate-500">
+            <thead className="bg-muted/50">
+              <tr className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                 <th className="px-4 py-3 font-semibold">#</th>
                 <th className="px-4 py-3 font-semibold">Documento</th>
                 <th className="px-4 py-3 font-semibold">Desde</th>
@@ -460,22 +460,22 @@ function PacTab({ documents }: { documents: PacDocument[] }) {
             </thead>
             <tbody>
               {documents.map((document) => (
-                <tr key={document.id} className="border-t border-white/5 hover:bg-white/[0.025]">
-                  <td className="px-4 py-3 text-xs text-slate-500">{document.it}</td>
+                <tr key={document.id} className="border-t border-border/60 hover:bg-muted/40">
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{document.it}</td>
                   <td className="max-w-[420px] px-4 py-3">
                     <div className="flex flex-wrap items-center gap-2">
                       <Badge variant={kindVariant(document.kind)}>{kindLabel(document.kind)}</Badge>
-                      <span className="text-slate-200">{document.title}</span>
+                      <span className="text-foreground">{document.title}</span>
                     </div>
                     {document.register ? (
-                      <p className="mt-1 text-[11px] text-slate-600">Registro {document.register}</p>
+                      <p className="mt-1 text-[11px] text-muted-foreground/70">Registro {document.register}</p>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3 text-xs text-slate-400">{document.from || '—'}</td>
-                  <td className="px-4 py-3 text-xs text-slate-400">
+                  <td className="px-4 py-3 text-xs text-muted-foreground">{document.from || '—'}</td>
+                  <td className="px-4 py-3 text-xs text-muted-foreground">
                     {document.recipientsCount > 0 ? `${document.recipientsCount}` : '—'}
                   </td>
-                  <td className="whitespace-nowrap px-4 py-3 text-xs text-slate-500">
+                  <td className="whitespace-nowrap px-4 py-3 text-xs text-muted-foreground">
                     {formatDateTime(document.recordDate)}
                   </td>
                   <td className="px-4 py-3 text-right">
@@ -521,23 +521,23 @@ function ObservationsTab({ observations }: { observations: Observation[] }) {
                   {sentimentLabel(observation.sentiment)}
                 </Badge>
               </div>
-              <span className="text-[11px] text-slate-500">{formatDate(observation.date)}</span>
+              <span className="text-[11px] text-muted-foreground">{formatDate(observation.date)}</span>
             </div>
             <div>
-              <p className="text-sm font-medium text-slate-200">{observation.sender}</p>
-              <p className="text-[11px] text-slate-600">{observation.subject}</p>
+              <p className="text-sm font-medium text-foreground">{observation.sender}</p>
+              <p className="text-[11px] text-muted-foreground/70">{observation.subject}</p>
             </div>
-            <p className="line-clamp-5 whitespace-pre-line text-sm leading-6 text-slate-400">
+            <p className="line-clamp-5 whitespace-pre-line text-sm leading-6 text-muted-foreground">
               {observation.content || observation.summary || 'Sin texto extraído.'}
             </p>
             <div>
-              <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wider text-slate-600">
+              <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground/70">
                 <span>Importancia</span>
                 <span>{Math.round(observation.importance * 100)}%</span>
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/5">
+              <div className="h-1.5 overflow-hidden rounded-full bg-accent">
                 <div
-                  className="h-full rounded-full bg-gradient-to-r from-sky-400 to-violet-400"
+                  className="h-full rounded-full bg-gradient-to-r from-primary to-violet"
                   style={{ width: `${Math.round(observation.importance * 100)}%` }}
                 />
               </div>
@@ -579,23 +579,23 @@ function TimelineTab({ events }: { events: TimelineEvent[] }) {
         <CardDescription>Eventos administrativos y ciudadanos del expediente.</CardDescription>
       </CardHeader>
       <CardContent>
-        <ol className="relative space-y-6 border-l border-white/10 pl-6">
+        <ol className="relative space-y-6 border-l border-border pl-6">
           {[...events].reverse().map((event) => (
             <li key={event.id} className="relative">
-              <span className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-sky-400 ring-4 ring-slate-950" />
+              <span className="absolute -left-[31px] top-1.5 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background" />
               <div className="flex flex-wrap items-center gap-2">
                 <Badge variant={timelineVariant(event.type)}>{timelineLabel(event.type)}</Badge>
-                <span className="text-[11px] text-slate-500">{formatDate(event.date)}</span>
+                <span className="text-[11px] text-muted-foreground">{formatDate(event.date)}</span>
               </div>
-              <p className="mt-1.5 text-sm font-medium text-slate-200">{event.title}</p>
+              <p className="mt-1.5 text-sm font-medium text-foreground">{event.title}</p>
               {event.description ? (
-                <p className="mt-1 text-xs leading-5 text-slate-500">{event.description}</p>
+                <p className="mt-1 text-xs leading-5 text-muted-foreground">{event.description}</p>
               ) : null}
               {event.sourceUrl ? (
                 <button
                   type="button"
                   onClick={() => openExternal(event.sourceUrl)}
-                  className="mt-1 inline-flex items-center gap-1 text-[11px] text-sky-400 hover:text-sky-300"
+                  className="mt-1 inline-flex items-center gap-1 text-[11px] text-primary hover:text-primary"
                 >
                   Ver fuente
                   <ExternalLink className="h-3 w-3" />
@@ -659,11 +659,11 @@ function NotesTab({ projectId, notes }: { projectId: string; notes: Note[] }) {
         <CardContent className="space-y-3">
           <div className="grid gap-3 sm:grid-cols-2">
             <label className="space-y-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Autor</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Autor</span>
               <Input value={author} onChange={(event) => setAuthor(event.target.value)} />
             </label>
             <label className="space-y-1.5">
-              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Prioridad</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Prioridad</span>
               <Select value={priority} onChange={(event) => setPriority(event.target.value as NotePriority)}>
                 <option value="low">Baja</option>
                 <option value="medium">Media</option>
@@ -672,7 +672,7 @@ function NotesTab({ projectId, notes }: { projectId: string; notes: Note[] }) {
             </label>
           </div>
           <label className="space-y-1.5 block">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Contenido</span>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Contenido</span>
             <Textarea
               rows={6}
               placeholder="Escribe una minuta, compromiso o comentario…"
@@ -681,7 +681,7 @@ function NotesTab({ projectId, notes }: { projectId: string; notes: Note[] }) {
             />
           </label>
           <label className="space-y-1.5 block">
-            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">Fecha límite</span>
+            <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">Fecha límite</span>
             <Input type="date" value={dueDate} onChange={(event) => setDueDate(event.target.value)} />
           </label>
           {error ? <Alert tone="error">{error}</Alert> : null}
@@ -712,10 +712,10 @@ function NotesTab({ projectId, notes }: { projectId: string; notes: Note[] }) {
                     <Badge variant={note.priority === 'high' ? 'red' : note.priority === 'medium' ? 'amber' : 'slate'}>
                       {note.priority === 'high' ? 'Alta' : note.priority === 'medium' ? 'Media' : 'Baja'}
                     </Badge>
-                    <span className="text-xs text-slate-400">{note.author}</span>
+                    <span className="text-xs text-muted-foreground">{note.author}</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <span className="text-[11px] text-slate-600">{formatRelative(note.updatedAt)}</span>
+                    <span className="text-[11px] text-muted-foreground/70">{formatRelative(note.updatedAt)}</span>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -726,17 +726,17 @@ function NotesTab({ projectId, notes }: { projectId: string; notes: Note[] }) {
                     </Button>
                   </div>
                 </div>
-                <p className="whitespace-pre-line text-sm leading-6 text-slate-300">{note.content}</p>
-                <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
+                <p className="whitespace-pre-line text-sm leading-6 text-foreground/90">{note.content}</p>
+                <div className="flex flex-wrap items-center gap-3 text-[11px] text-muted-foreground">
                   <span className="inline-flex items-center gap-1">
                     <CalendarDays className="h-3.5 w-3.5" />
                     {note.status.dueDate ? `Vence ${formatDate(note.status.dueDate)}` : 'Sin fecha límite'}
                   </span>
                   <span className="inline-flex items-center gap-1">
                     {note.status.done ? (
-                      <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                     ) : (
-                      <XCircle className="h-3.5 w-3.5 text-slate-600" />
+                      <XCircle className="h-3.5 w-3.5 text-muted-foreground/70" />
                     )}
                     {note.status.done ? 'Completada' : 'Pendiente'}
                   </span>
@@ -752,21 +752,21 @@ function NotesTab({ projectId, notes }: { projectId: string; notes: Note[] }) {
 
 function Detail({ label, value }: { label: string; value?: string }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.025] p-3">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">{label}</p>
-      <p className="mt-1 text-sm text-slate-300">{value || '—'}</p>
+    <div className="rounded-xl border border-border bg-muted/40 p-3">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">{label}</p>
+      <p className="mt-1 text-sm text-foreground/90">{value || '—'}</p>
     </div>
   );
 }
 
 function Metric({ label, value, icon }: { label: string; value: string; icon: ReactNode }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.025] p-3">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="rounded-xl border border-border bg-muted/40 p-3">
+      <div className="flex items-center gap-2 text-muted-foreground">
         {icon}
         <span className="text-[10px] font-semibold uppercase tracking-[0.16em]">{label}</span>
       </div>
-      <p className="mt-2 text-2xl font-semibold text-white">{value}</p>
+      <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
     </div>
   );
 }

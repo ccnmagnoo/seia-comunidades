@@ -11,6 +11,7 @@ import {
   CardTitle,
   Spinner,
 } from '../components/ui/primitives';
+import { ThemeToggle } from '../components/ThemeToggle';
 import { getApi } from '../lib/api';
 import { queryClient, queryKeys } from '../lib/query-client';
 
@@ -46,11 +47,11 @@ function SettingsContent() {
   return (
     <div className="space-y-7">
       <header>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-400/80">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/80">
           Espacio local
         </p>
-        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">Configuración</h1>
-        <p className="mt-1 text-sm text-slate-500">
+        <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">Configuración</h1>
+        <p className="mt-1 text-sm text-muted-foreground">
           Rutas, versión y filtros por defecto de la aplicación de escritorio.
         </p>
       </header>
@@ -77,12 +78,12 @@ function SettingsContent() {
           </CardHeader>
           <CardContent className="space-y-3">
             <PathRow icon={<Globe2 className="h-4 w-4" />} label="Base URL" value={data.seiaBaseUrl} />
-            <div className="rounded-xl border border-emerald-400/15 bg-emerald-500/5 p-3">
-              <div className="flex items-center gap-2 text-emerald-300">
+            <div className="rounded-xl border border-success/25 bg-success/5 p-3">
+              <div className="flex items-center gap-2 text-success">
                 <ShieldCheck className="h-4 w-4" />
                 <span className="text-xs font-medium">Procesamiento local</span>
               </div>
-              <p className="mt-1 text-xs leading-relaxed text-slate-400">
+              <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                 El renderer no accede a red ni filesystem: todo pasa por IPC validado y por el
                 proceso principal de Electron.
               </p>
@@ -93,22 +94,34 @@ function SettingsContent() {
 
       <Card>
         <CardHeader>
+          <CardTitle>Apariencia</CardTitle>
+          <CardDescription>
+            Elige el tema de la interfaz. “Sistema” sigue la preferencia del sistema operativo.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="max-w-md">
+          <ThemeToggle />
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
           <CardTitle>Filtros por defecto</CardTitle>
           <CardDescription>Se usan al abrir la sincronización desde Proyectos.</CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid gap-3 md:grid-cols-3">
-            <div className="rounded-xl border border-white/8 bg-white/[0.025] p-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">Región</p>
-              <p className="mt-1 text-sm text-slate-300">{data.defaultRegionIds.join(', ') || 'Todas'}</p>
+            <div className="rounded-xl border border-border bg-muted/40 p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">Región</p>
+              <p className="mt-1 text-sm text-foreground/90">{data.defaultRegionIds.join(', ') || 'Todas'}</p>
             </div>
-            <div className="rounded-xl border border-white/8 bg-white/[0.025] p-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">Sector</p>
-              <p className="mt-1 text-sm text-slate-300">{data.defaultSectorIds.join(', ') || 'Todos'}</p>
+            <div className="rounded-xl border border-border bg-muted/40 p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">Sector</p>
+              <p className="mt-1 text-sm text-foreground/90">{data.defaultSectorIds.join(', ') || 'Todos'}</p>
             </div>
-            <div className="rounded-xl border border-white/8 bg-white/[0.025] p-3">
-              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600">Estado</p>
-              <p className="mt-1 text-sm text-slate-300">{data.defaultStatusIds.join(', ') || 'Todos'}</p>
+            <div className="rounded-xl border border-border bg-muted/40 p-3">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground/70">Estado</p>
+              <p className="mt-1 text-sm text-foreground/90">{data.defaultStatusIds.join(', ') || 'Todos'}</p>
             </div>
           </div>
           <div className="mt-4 flex items-center gap-2">
@@ -123,12 +136,12 @@ function SettingsContent() {
 
 function PathRow({ icon, label, value }: { icon: ReactNode; label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/8 bg-white/[0.025] p-3">
-      <div className="flex items-center gap-2 text-slate-500">
+    <div className="rounded-xl border border-border bg-muted/40 p-3">
+      <div className="flex items-center gap-2 text-muted-foreground">
         {icon}
         <span className="text-[10px] font-semibold uppercase tracking-[0.16em]">{label}</span>
       </div>
-      <p className="mt-1 break-all font-mono text-[11px] text-slate-400">{value}</p>
+      <p className="mt-1 break-all font-mono text-[11px] text-muted-foreground">{value}</p>
     </div>
   );
 }

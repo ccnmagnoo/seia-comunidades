@@ -8,7 +8,7 @@ import {
   MapPin,
   Users,
 } from 'lucide-react';
-import { Chart, chartAxisStyle } from '../components/Chart';
+import { Chart, chartTheme } from '../components/Chart';
 import {
   Alert,
   Badge,
@@ -23,6 +23,7 @@ import {
   StatCard,
   Spinner,
 } from '../components/ui/primitives';
+import { useTheme } from '../hooks/useTheme';
 import { getApi } from '../lib/api';
 import { queryClient, queryKeys } from '../lib/query-client';
 import { formatInt, formatRelative } from '../lib/utils';
@@ -37,6 +38,7 @@ export default function DashboardIsland() {
 
 function DashboardContent() {
   const api = getApi();
+  const { resolved } = useTheme();
   const stats = useQuery({
     queryKey: queryKeys.stats,
     queryFn: () => api.dashboard.stats(),
@@ -61,28 +63,34 @@ function DashboardContent() {
   const data = stats.data;
   if (!data) return null;
 
+  const colors = chartTheme(resolved);
+  const axisStyle = {
+    axisLine: colors.axisLine,
+    axisTick: { show: false },
+    axisLabel: colors.axisLabel,
+    splitLine: colors.splitLine,
+  };
+
   const regionOption: EChartsOption = {
     grid: { left: 16, right: 20, top: 16, bottom: 8, containLabel: true },
     tooltip: {
       trigger: 'axis',
-      backgroundColor: '#0f172a',
-      borderColor: 'rgba(148,163,184,0.2)',
-      textStyle: { color: '#e2e8f0', fontSize: 12 },
+      ...colors.tooltip,
     },
     xAxis: {
       type: 'category',
       data: data.byRegion.map((point) => point.label.replace('Región de ', '').replace('Región del ', '')),
-      ...chartAxisStyle,
-      axisLabel: { ...chartAxisStyle.axisLabel, rotate: 20 },
+      ...axisStyle,
+      axisLabel: { ...colors.axisLabel, rotate: 20 },
     },
-    yAxis: { type: 'value', ...chartAxisStyle },
+    yAxis: { type: 'value', ...axisStyle },
     series: [
       {
         type: 'bar',
         data: data.byRegion.map((point) => point.value),
         barMaxWidth: 28,
         itemStyle: {
-          color: '#38bdf8',
+          color: colors.bar,
           borderRadius: [6, 6, 0, 0],
         },
       },
@@ -99,12 +107,10 @@ function DashboardContent() {
     grid: { left: 16, right: 20, top: 16, bottom: 8, containLabel: true },
     tooltip: {
       trigger: 'axis',
-      backgroundColor: '#0f172a',
-      borderColor: 'rgba(148,163,184,0.2)',
-      textStyle: { color: '#e2e8f0', fontSize: 12 },
+      ...colors.tooltip,
     },
-    xAxis: { type: 'category', data: monthLabels, ...chartAxisStyle },
-    yAxis: { type: 'value', ...chartAxisStyle },
+    xAxis: { type: 'category', data: monthLabels, ...axisStyle },
+    yAxis: { type: 'value', ...axisStyle },
     series: [
       {
         type: 'line',
@@ -112,8 +118,8 @@ function DashboardContent() {
         symbol: 'circle',
         symbolSize: 7,
         data: data.observationsByMonth.map((point) => point.value),
-        lineStyle: { color: '#a78bfa', width: 3 },
-        itemStyle: { color: '#a78bfa' },
+        lineStyle: { color: colors.line, width: 3 },
+        itemStyle: { color: colors.line },
         areaStyle: {
           color: {
             type: 'linear',
@@ -122,8 +128,8 @@ function DashboardContent() {
             x2: 0,
             y2: 1,
             colorStops: [
-              { offset: 0, color: 'rgba(167,139,250,0.32)' },
-              { offset: 1, color: 'rgba(167,139,250,0)' },
+              { offset: 0, color: colors.areaTop },
+              { offset: 1, color: colors.areaBottom },
             ],
           },
         },
@@ -135,11 +141,11 @@ function DashboardContent() {
     <div className="space-y-7">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-400/80">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/80">
             Monitoreo territorial
           </p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">Dashboard ejecutivo</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">Dashboard ejecutivo</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Estado de expedientes, participación ciudadana y observaciones del SEIA.
           </p>
         </div>
@@ -197,9 +203,9 @@ function DashboardContent() {
               </CardHeader>
               <CardContent>
                 {data.byRegion.length > 0 ? (
-                  <Chart option={regionOption} />
+                  <Chart option={regionOption} theme={resolved} />
                 ) : (
-                  <p className="py-12 text-center text-sm text-slate-500">Sin datos regionales.</p>
+                  <p className="py-12 text-center text-sm text-muted-foreground">Sin datos regionales.</p>
                 )}
               </CardContent>
             </Card>
@@ -209,7 +215,7 @@ function DashboardContent() {
                 <CardDescription>Últimos seis meses con actividad registrada.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Chart option={observationsOption} />
+                <Chart option={observationsOption} theme={resolved} />
               </CardContent>
             </Card>
           </section>
@@ -231,7 +237,7 @@ function DashboardContent() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-white/8 text-[11px] uppercase tracking-wider text-slate-500">
+                    <tr className="border-b border-border text-[11px] uppercase tracking-wider text-muted-foreground">
                       <th className="pb-3 pr-4 font-medium">Expediente</th>
                       <th className="pb-3 pr-4 font-medium">Ubicación</th>
                       <th className="pb-3 pr-4 font-medium">Estado</th>
@@ -241,30 +247,30 @@ function DashboardContent() {
                   </thead>
                   <tbody>
                     {data.recentProjects.map((project) => (
-                      <tr key={project.id} className="border-b border-white/5 last:border-0">
+                      <tr key={project.id} className="border-b border-border/60 last:border-0">
                         <td className="py-3 pr-4">
                           <a
                             href={`/project?id=${encodeURIComponent(project.id)}`}
-                            className="font-medium text-slate-100 hover:text-sky-300"
+                            className="font-medium text-foreground hover:text-primary"
                           >
                             {project.name}
                           </a>
-                          <p className="text-xs text-slate-500">{project.owner.name}</p>
+                          <p className="text-xs text-muted-foreground">{project.owner.name}</p>
                         </td>
-                        <td className="py-3 pr-4 text-slate-400">
+                        <td className="py-3 pr-4 text-muted-foreground">
                           <span className="inline-flex items-center gap-1.5">
-                            <MapPin className="h-3.5 w-3.5 text-slate-600" />
+                            <MapPin className="h-3.5 w-3.5 text-muted-foreground/70" />
                             {project.location.commune}
                           </span>
-                          <p className="text-xs text-slate-600">{project.location.region}</p>
+                          <p className="text-xs text-muted-foreground/70">{project.location.region}</p>
                         </td>
                         <td className="py-3 pr-4">
                           <Badge variant={statusVariant(project.status)}>{project.status}</Badge>
                         </td>
-                        <td className="py-3 pr-4 text-slate-400">
+                        <td className="py-3 pr-4 text-muted-foreground">
                           {project.pac.recordsTotal} docs · {project.pac.observationsTotal} obs
                         </td>
-                        <td className="py-3 text-right text-xs text-slate-500">
+                        <td className="py-3 text-right text-xs text-muted-foreground">
                           {formatRelative(project.updatedAt)}
                         </td>
                       </tr>

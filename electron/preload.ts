@@ -3,6 +3,7 @@ import { IPC_CHANNELS, IPC_EVENTS } from '../src/shared/ipc';
 import type { IpcResult, SeiaApi } from '../src/shared/ipc';
 import type { SyncProgress } from '../src/shared/filters';
 import type { ReportFormat } from '../src/application/ports/report-service';
+import type { ThemePreference } from '../src/shared/theme';
 
 async function invoke<T>(channel: string, ...args: unknown[]): Promise<T> {
   const result = (await ipcRenderer.invoke(channel, ...args)) as IpcResult<T>;
@@ -56,6 +57,13 @@ const api: SeiaApi = {
   reports: {
     generate: (projectId: string, format: ReportFormat) =>
       invoke(IPC_CHANNELS.reportsExport, { projectId, format }),
+  },
+  theme: {
+    setNative: (preference: ThemePreference) =>
+      invoke<{ resolved: import('../src/shared/theme').ResolvedTheme }>(
+        IPC_CHANNELS.themeSetNative,
+        preference,
+      ),
   },
   settings: {
     get: () => invoke(IPC_CHANNELS.settingsGet),

@@ -11,15 +11,20 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../lib/utils';
 
 export const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-400/60 disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/60 disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'bg-sky-500 text-slate-950 shadow-lg shadow-sky-500/20 hover:bg-sky-400',
-        secondary: 'bg-white/8 text-slate-100 ring-1 ring-inset ring-white/10 hover:bg-white/12',
-        outline: 'border border-white/12 bg-transparent text-slate-200 hover:bg-white/5',
-        ghost: 'text-slate-400 hover:bg-white/5 hover:text-slate-100',
-        danger: 'bg-rose-500/90 text-white hover:bg-rose-500',
+        default:
+          'bg-primary text-primary-foreground shadow-lg shadow-primary/20 hover:bg-primary/90',
+        secondary:
+          'bg-secondary text-secondary-foreground ring-1 ring-inset ring-border hover:bg-secondary/80',
+        outline:
+          'border border-border bg-transparent text-foreground hover:bg-accent hover:text-accent-foreground',
+        ghost:
+          'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
+        danger:
+          'bg-destructive text-destructive-foreground hover:bg-destructive/90',
       },
       size: {
         default: 'h-9 px-3.5',
@@ -78,7 +83,7 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
       className={cn(
-        'rounded-2xl border border-white/8 bg-slate-900/55 shadow-xl shadow-black/10 backdrop-blur',
+        'rounded-2xl border border-border bg-card/95 text-card-foreground shadow-[0_18px_50px_-28px_var(--shadow-color)] backdrop-blur',
         className,
       )}
       {...props}
@@ -91,11 +96,11 @@ export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElemen
 }
 
 export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
-  return <h3 className={cn('text-sm font-semibold tracking-tight text-slate-100', className)} {...props} />;
+  return <h3 className={cn('text-sm font-semibold tracking-tight text-foreground', className)} {...props} />;
 }
 
 export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
-  return <p className={cn('text-xs text-slate-500', className)} {...props} />;
+  return <p className={cn('text-xs text-muted-foreground', className)} {...props} />;
 }
 
 export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
@@ -107,12 +112,12 @@ const badgeVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-sky-500/12 text-sky-300 ring-sky-400/20',
-        slate: 'bg-white/5 text-slate-300 ring-white/10',
-        green: 'bg-emerald-500/12 text-emerald-300 ring-emerald-400/20',
-        amber: 'bg-amber-500/12 text-amber-300 ring-amber-400/20',
-        red: 'bg-rose-500/12 text-rose-300 ring-rose-400/20',
-        violet: 'bg-violet-500/12 text-violet-300 ring-violet-400/20',
+        default: 'bg-primary/12 text-primary ring-primary/25',
+        slate: 'bg-muted text-muted-foreground ring-border',
+        green: 'bg-success/12 text-success ring-success/25',
+        amber: 'bg-warning/12 text-warning ring-warning/25',
+        red: 'bg-destructive/12 text-destructive ring-destructive/25',
+        violet: 'bg-violet/12 text-violet ring-violet/25',
       },
     },
     defaultVariants: { variant: 'default' },
@@ -131,7 +136,7 @@ export function Input({ className, ...props }: InputHTMLAttributes<HTMLInputElem
   return (
     <input
       className={cn(
-        'h-9 w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 text-sm text-slate-100 placeholder:text-slate-600 focus:border-sky-400/60 focus:outline-none focus:ring-2 focus:ring-sky-400/20',
+        'h-9 w-full rounded-xl border border-input bg-background/60 px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20',
         className,
       )}
       {...props}
@@ -143,7 +148,7 @@ export function Select({ className, children, ...props }: SelectHTMLAttributes<H
   return (
     <select
       className={cn(
-        'h-9 w-full appearance-none rounded-xl border border-white/10 bg-slate-950/60 px-3 text-sm text-slate-100 focus:border-sky-400/60 focus:outline-none focus:ring-2 focus:ring-sky-400/20',
+        'h-9 w-full appearance-none rounded-xl border border-input bg-background/60 px-3 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20',
         className,
       )}
       {...props}
@@ -157,7 +162,7 @@ export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTex
   return (
     <textarea
       className={cn(
-        'w-full rounded-xl border border-white/10 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-600 focus:border-sky-400/60 focus:outline-none focus:ring-2 focus:ring-sky-400/20',
+        'w-full rounded-xl border border-input bg-background/60 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-2 focus:ring-ring/20',
         className,
       )}
       {...props}
@@ -166,7 +171,7 @@ export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTex
 }
 
 export function Spinner({ className }: { className?: string }) {
-  return <Loader2 className={cn('h-5 w-5 animate-spin text-sky-400', className)} />;
+  return <Loader2 className={cn('h-5 w-5 animate-spin text-primary', className)} />;
 }
 
 export function EmptyState({
@@ -179,9 +184,9 @@ export function EmptyState({
   action?: ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02] px-6 py-14 text-center">
-      <p className="text-sm font-medium text-slate-200">{title}</p>
-      <p className="mt-1 max-w-md text-sm text-slate-500">{description}</p>
+    <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border bg-muted/20 px-6 py-14 text-center">
+      <p className="text-sm font-medium text-foreground">{title}</p>
+      <p className="mt-1 max-w-md text-sm text-muted-foreground">{description}</p>
       {action ? <div className="mt-4">{action}</div> : null}
     </div>
   );
@@ -195,9 +200,9 @@ export function Alert({
   children: ReactNode;
 }) {
   const tones = {
-    error: 'border-rose-400/20 bg-rose-500/10 text-rose-200',
-    warning: 'border-amber-400/20 bg-amber-500/10 text-amber-200',
-    info: 'border-sky-400/20 bg-sky-500/10 text-sky-200',
+    error: 'border-destructive/25 bg-destructive/10 text-destructive',
+    warning: 'border-warning/25 bg-warning/10 text-warning',
+    info: 'border-info/25 bg-info/10 text-info',
   };
   return (
     <div className={cn('rounded-xl border px-3.5 py-2.5 text-xs leading-relaxed', tones[tone])}>
@@ -221,12 +226,14 @@ export function StatCard({
     <Card className="p-5">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">{label}</p>
-          <p className="mt-2 text-3xl font-semibold tracking-tight text-white">{value}</p>
-          {hint ? <p className="mt-1 text-xs text-slate-500">{hint}</p> : null}
+          <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground">
+            {label}
+          </p>
+          <p className="mt-2 text-3xl font-semibold tracking-tight text-foreground">{value}</p>
+          {hint ? <p className="mt-1 text-xs text-muted-foreground/80">{hint}</p> : null}
         </div>
         {icon ? (
-          <span className="grid h-9 w-9 place-items-center rounded-xl bg-sky-500/10 text-sky-300 ring-1 ring-inset ring-sky-400/15">
+          <span className="grid h-9 w-9 place-items-center rounded-xl bg-primary/10 text-primary ring-1 ring-inset ring-primary/15">
             {icon}
           </span>
         ) : null}

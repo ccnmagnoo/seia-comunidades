@@ -54,7 +54,7 @@ function GlobalSearch() {
   return (
     <div ref={containerRef} className="relative mb-6">
       <div className="relative">
-        <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-600" />
+        <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/70" />
         <Input
           className="pl-9"
           placeholder="Buscar en la base local…"
@@ -68,16 +68,16 @@ function GlobalSearch() {
       </div>
 
       {showPanel ? (
-        <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-xl border border-white/10 bg-slate-900 shadow-2xl shadow-black/50">
+        <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-xl border border-border bg-card shadow-2xl shadow-black/50">
           {results.isFetching ? (
-            <div className="flex items-center gap-2 px-3 py-3 text-xs text-slate-400">
+            <div className="flex items-center gap-2 px-3 py-3 text-xs text-muted-foreground">
               <Spinner className="h-3.5 w-3.5" />
               Buscando…
             </div>
           ) : null}
 
           {!results.isFetching && (results.data?.length ?? 0) === 0 ? (
-            <p className="px-3 py-3 text-xs text-slate-500">Sin resultados para “{debounced}”.</p>
+            <p className="px-3 py-3 text-xs text-muted-foreground">Sin resultados para “{debounced}”.</p>
           ) : null}
 
           <div className="max-h-80 overflow-y-auto">
@@ -87,15 +87,15 @@ function GlobalSearch() {
                 type="button"
                 onMouseDown={(event) => event.preventDefault()}
                 onClick={() => navigate(hit)}
-                className="flex w-full items-start gap-3 border-b border-white/5 px-3 py-2.5 text-left transition last:border-0 hover:bg-white/5"
+                className="flex w-full items-start gap-3 border-b border-border/60 px-3 py-2.5 text-left transition last:border-0 hover:bg-accent"
               >
-                <span className="mt-0.5 text-slate-500">{iconFor(hit.kind)}</span>
+                <span className="mt-0.5 text-muted-foreground">{iconFor(hit.kind)}</span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className="truncate text-xs font-medium text-slate-200">{hit.title}</span>
+                    <span className="truncate text-xs font-medium text-foreground">{hit.title}</span>
                     <Badge variant="slate">{kindLabel(hit.kind)}</Badge>
                   </span>
-                  <span className="mt-0.5 block truncate text-[11px] text-slate-500">{hit.snippet}</span>
+                  <span className="mt-0.5 block truncate text-[11px] text-muted-foreground">{hit.snippet}</span>
                 </span>
               </button>
             ))}

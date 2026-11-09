@@ -1,4 +1,4 @@
-import { app, BrowserWindow, dialog, protocol, shell } from 'electron';
+import { app, BrowserWindow, dialog, nativeTheme, protocol, shell } from 'electron';
 import { existsSync, mkdirSync, copyFileSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { extname, join, normalize, resolve } from 'node:path';
@@ -52,7 +52,7 @@ async function createWindow(): Promise<void> {
     minWidth: 1120,
     minHeight: 720,
     show: false,
-    backgroundColor: '#0b1020',
+    backgroundColor: nativeTheme.shouldUseDarkColors ? '#070b16' : '#f6f8fc',
     title: 'SEIA Comunidades',
     webPreferences: {
       preload: join(__dirname, 'preload.cjs'),

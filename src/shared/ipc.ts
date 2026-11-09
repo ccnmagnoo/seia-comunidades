@@ -19,6 +19,7 @@ import type {
 import type { SearchHit } from './search';
 import type { SerializedError } from './errors';
 import type { ReportFormat, ReportResult } from '../application/ports/report-service';
+import type { ResolvedTheme, ThemePreference } from './theme';
 
 export const IPC_CHANNELS = {
   catalogsGet: 'catalogs:get',
@@ -35,6 +36,7 @@ export const IPC_CHANNELS = {
   dashboardStats: 'dashboard:stats',
   searchQuery: 'search:query',
   reportsExport: 'reports:export',
+  themeSetNative: 'theme:set-native',
   settingsGet: 'settings:get',
   appOpenExternal: 'app:open-external',
   appShowItem: 'app:show-item',
@@ -93,6 +95,9 @@ export interface SeiaApi {
   };
   reports: {
     generate: (projectId: string, format: ReportFormat) => Promise<ReportResult>;
+  };
+  theme: {
+    setNative: (preference: ThemePreference) => Promise<{ resolved: ResolvedTheme }>;
   };
   settings: {
     get: () => Promise<AppSettings>;

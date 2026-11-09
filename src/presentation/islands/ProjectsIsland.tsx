@@ -132,11 +132,11 @@ function ProjectsContent() {
     <div className="space-y-7">
       <header className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-sky-400/80">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-primary/80">
             Base local
           </p>
-          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-white">Proyectos</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">Proyectos</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
             Sincroniza expedientes del SEIA y administra su seguimiento institucional.
           </p>
         </div>
@@ -211,7 +211,7 @@ function ProjectsContent() {
               <RefreshCw className="h-4 w-4" />
               Sincronizar {regionName}
             </Button>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-muted-foreground">
               Filtros por defecto del espacio local. Puedes ajustarlos antes de ejecutar.
             </p>
           </div>
@@ -256,7 +256,7 @@ function ProjectsContent() {
         <CardContent className="space-y-4 pt-4">
           <div className="grid gap-3 md:grid-cols-4">
             <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-slate-600" />
+              <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground/70" />
               <Input
                 className="pl-9"
                 placeholder="Buscar por nombre, titular, etiqueta…"
@@ -319,10 +319,10 @@ function ProjectsContent() {
               }
             />
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-white/8">
+            <div className="overflow-x-auto rounded-xl border border-border">
               <table className="w-full text-left text-sm">
-                <thead className="bg-white/[0.03]">
-                  <tr className="text-[10px] uppercase tracking-[0.16em] text-slate-500">
+                <thead className="bg-muted/50">
+                  <tr className="text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
                     <th className="whitespace-nowrap px-4 py-3 font-semibold">Expediente</th>
                     <th className="whitespace-nowrap px-4 py-3 font-semibold">Ubicación</th>
                     <th className="whitespace-nowrap px-4 py-3 font-semibold">Estado</th>
@@ -335,39 +335,39 @@ function ProjectsContent() {
                   {(projects.data ?? []).map((project) => (
                     <tr
                       key={project.id}
-                      className="border-t border-white/5 transition hover:bg-white/[0.025]"
+                      className="border-t border-border/60 transition hover:bg-muted/40"
                     >
                       <td className="max-w-[420px] px-4 py-3 align-top">
                         <a
                           href={`/project?id=${encodeURIComponent(project.id)}`}
-                          className="font-medium text-slate-100 hover:text-sky-300"
+                          className="font-medium text-foreground hover:text-primary"
                         >
                           {project.name}
                         </a>
-                        <p className="mt-0.5 truncate text-xs text-slate-500">{project.owner.name}</p>
+                        <p className="mt-0.5 truncate text-xs text-muted-foreground">{project.owner.name}</p>
                       </td>
                       <td className="px-4 py-3 align-top">
-                        <span className="inline-flex items-center gap-1.5 text-slate-300">
-                          <MapPin className="h-3.5 w-3.5 text-slate-600" />
+                        <span className="inline-flex items-center gap-1.5 text-foreground/90">
+                          <MapPin className="h-3.5 w-3.5 text-muted-foreground/70" />
                           {project.location.commune}
                         </span>
-                        <p className="text-xs text-slate-600">{project.location.region}</p>
+                        <p className="text-xs text-muted-foreground/70">{project.location.region}</p>
                       </td>
                       <td className="px-4 py-3 align-top">
                         <div className="flex flex-col gap-1">
                           <Badge variant={statusVariant(project.status)}>{project.status}</Badge>
-                          <span className="text-[10px] uppercase tracking-wider text-slate-600">
+                          <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70">
                             {project.workflow}
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 align-top text-xs text-slate-400">
+                      <td className="px-4 py-3 align-top text-xs text-muted-foreground">
                         <p>{formatInt(project.pac.recordsTotal)} documentos</p>
-                        <p className="text-slate-600">
+                        <p className="text-muted-foreground/70">
                           {formatInt(project.pac.observationsTotal)} observaciones
                         </p>
                       </td>
-                      <td className="px-4 py-3 align-top text-xs text-slate-500">
+                      <td className="px-4 py-3 align-top text-xs text-muted-foreground">
                         {formatRelative(project.updatedAt)}
                       </td>
                       <td className="px-4 py-3 align-top">
@@ -407,7 +407,7 @@ function RowActions({ project }: { project: ProjectSummary }) {
       >
         <Star
           className={
-            project.tracking.favorite ? 'h-4 w-4 fill-amber-300 text-amber-300' : 'h-4 w-4'
+            project.tracking.favorite ? 'h-4 w-4 fill-warning text-warning' : 'h-4 w-4'
           }
         />
       </Button>
@@ -419,7 +419,7 @@ function RowActions({ project }: { project: ProjectSummary }) {
       >
         <AlertTriangle
           className={
-            project.tracking.critical ? 'h-4 w-4 text-rose-300' : 'h-4 w-4'
+            project.tracking.critical ? 'h-4 w-4 text-destructive' : 'h-4 w-4'
           }
         />
       </Button>
@@ -438,7 +438,7 @@ function RowActions({ project }: { project: ProjectSummary }) {
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
     <label className="space-y-1.5">
-      <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+      <span className="block text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
         {label}
       </span>
       {children}

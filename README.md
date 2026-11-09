@@ -16,9 +16,10 @@ Vertical slice funcional:
 - Listado y detalle de expedientes con seguimiento (favorito, crítico, notas).
 - Búsqueda global local con FlexSearch desde la barra lateral.
 - Reportería por proyecto en CSV, XLSX, Markdown, HTML y PDF (Electron `printToPDF`).
+- Tema **Claro / Oscuro / Sistema** persistente, con sincronización del chrome nativo de Electron.
 - IPC tipado entre renderer y proceso principal.
 - Fixtures reales del portal para tests deterministas.
-- 26 tests unitarios/de integración.
+- 29 tests unitarios/de integración.
 - Instalador NSIS y versión portable generados con electron-builder.
 
 Pendiente para completar el MVP:
@@ -39,6 +40,10 @@ Pendiente para completar el MVP:
 ![Observaciones](docs/screenshots/observations.png)
 
 ![Búsqueda global](docs/screenshots/global-search.png)
+
+![Tema oscuro](docs/screenshots/theme-dark.png)
+
+![Tema claro](docs/screenshots/theme-light.png)
 
 ## Requisitos
 
@@ -74,6 +79,18 @@ pnpm start
 - `dist-electron/preload.cjs`: puente IPC seguro.
 
 En producción empaquetada, el renderer se sirve mediante el protocolo `app://` y los datos viven en `app.getPath('userData')`. En desarrollo, el workspace es la raíz del repositorio.
+
+## Tema claro / oscuro
+
+El selector de apariencia está en la barra lateral y en **Configuración**:
+
+- **Claro**: fuerza la paleta clara.
+- **Oscuro**: fuerza la paleta oscura.
+- **Sistema**: sigue `prefers-color-scheme` del sistema operativo.
+
+La preferencia se guarda en `localStorage` (`seia.theme`) y se aplica antes del primer paint para evitar destellos. Además, el renderer sincroniza `nativeTheme.themeSource` con Electron para que la barra de título y los diálogos nativos acompañen al tema elegido.
+
+Los colores se definen como tokens semánticos en `src/presentation/astro/styles/global.css` y se consumen con utilidades como `bg-background`, `text-foreground`, `bg-card`, `border-border` y `text-muted-foreground`.
 
 ## Sincronización con el SEIA
 

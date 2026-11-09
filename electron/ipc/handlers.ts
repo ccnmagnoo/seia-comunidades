@@ -1,4 +1,4 @@
-import { ipcMain, shell } from 'electron';
+import { BrowserWindow, ipcMain, nativeTheme, shell } from 'electron';
 import type { IpcMainInvokeEvent } from 'electron';
 import { isAbsolute, relative, resolve } from 'node:path';
 import { z } from 'zod';
@@ -95,6 +95,20 @@ export function registerIpcHandlers(container: Container): void {
     async ({ projectId, format }) => {
       const detail = await container.getProjectDetail.execute(projectId);
       return container.reports.generate(detail, format);
+    },
+  );
+
+  handle(
+    container,
+    IPC_CHANNELS.themeSetNative,
+    z.enum(['light', 'dark', 'system']),
+    async (preference) => {
+      nativeTheme.themeSource = preference;
+      const resolved = nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
+      for (const window of BrowserWindow.getAllWindows()) {
+        window.setBackgroundColor(resolved === 'dark' ? '#070b16' : '#f6f8fc');
+      }
+      return { resolved };
     },
   );
 
