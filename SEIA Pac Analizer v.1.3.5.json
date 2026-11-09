@@ -1,0 +1,1924 @@
+{
+  "name": "SEIA Pac Analizer",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -4032,
+        1120
+      ],
+      "id": "43addd64-26c8-44e6-ae59-2769a6581c17",
+      "name": "When clicking ‘Execute workflow’"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "{\n  \"webTools\":{\n  \"projects\": \"https://seia.sea.gob.cl/busqueda/buscarProyectoResumenAction.php\",\n  \"sheet\": \"https://seia.sea.gob.cl/expediente/ficha/fichaPrincipal.php?modo=normal&id_expediente=\",\n  \"records\":\"https://seia.sea.gob.cl/expediente/xhr_expediente.php?incluyePac=1&id_expediente=\",\n  \"pac\":\"https://seia.sea.gob.cl/expediente/xhr_documentos_pac.php?incluyePac=2&id_expediente=\",\n  \"schechule\":\"https://seia.sea.gob.cl/expediente/newPlazos.php?modo=ficha&id_expediente=\",\n    \"\":\"https://seia.sea.gob.cl/documentos/verDestinatarios.php?id_documento=\",\n    \"addresse\":\"https://seia.sea.gob.cl/documentos/verDestinatarios.php?id_documento=\"\n  }\n}\n",
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3568,
+        1232
+      ],
+      "id": "885136b3-110e-4fa6-a96c-31fa5ac4cfe8",
+      "name": "Sea Web Tools"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -3168,
+        1216
+      ],
+      "id": "85e349d8-2517-4bdc-82db-09addf7c4a1e",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2768,
+        1216
+      ],
+      "id": "17fea420-562b-4523-822e-897e3be1df89",
+      "name": "Project list"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.webTools.projects }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Connection",
+              "value": "Keep-Alive"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nombre"
+            },
+            {
+              "name": "titular"
+            },
+            {
+              "name": "selectRegion",
+              "value": "={{ $json.region.join(\",\") }}"
+            },
+            {
+              "name": "selectComuna",
+              "value": "={{ $json.comuna.join(\",\") }}"
+            },
+            {
+              "name": "tipoPresentacion"
+            },
+            {
+              "name": "projectStatus",
+              "value": "3"
+            },
+            {
+              "name": "PresentacionMin"
+            },
+            {
+              "name": "PresentacionMax"
+            },
+            {
+              "name": "CalificaMin"
+            },
+            {
+              "name": "CalificaMax"
+            },
+            {
+              "name": "sectores_economicos",
+              "value": "={{ $json.sector_economico.toString() }}"
+            },
+            {
+              "name": "razoningreso"
+            },
+            {
+              "name": "id_tipoexpediente"
+            },
+            {
+              "name": "offset",
+              "value": "={{ $json.offsetPage.toString() }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $json.itemsPerPage.toString() }}"
+            },
+            {
+              "name": "orderColumn",
+              "value": "FECHA_PRESENTACION"
+            },
+            {
+              "name": "orderDir",
+              "value": "desc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2992,
+        1216
+      ],
+      "id": "ae6888eb-ff95-46c1-bd8f-1784340f276a",
+      "name": "Fetch On Evaluation"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "data",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -2768,
+        1600
+      ],
+      "id": "e1bcbe8b-4e3f-450f-b276-12dde7f3b82a",
+      "name": "Project list1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.webTools.projects }}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Connection",
+              "value": "Keep-Alive"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "form-urlencoded",
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "nombre"
+            },
+            {
+              "name": "titular"
+            },
+            {
+              "name": "selectRegion",
+              "value": "={{ $json.region.join(\",\") }}"
+            },
+            {
+              "name": "selectComuna",
+              "value": "={{ $json.comuna.join(\",\") }}"
+            },
+            {
+              "name": "tipoPresentacion"
+            },
+            {
+              "name": "projectStatus",
+              "value": "4"
+            },
+            {
+              "name": "PresentacionMin"
+            },
+            {
+              "name": "PresentacionMax"
+            },
+            {
+              "name": "CalificaMin",
+              "value": "={{ \"1/1/\"+new Date().toDateTime().year }}"
+            },
+            {
+              "name": "CalificaMax",
+              "value": "={{ \"31/12/\"+new Date().toDateTime().year }}"
+            },
+            {
+              "name": "sectores_economicos",
+              "value": "={{ $json.sector_economico.toString() }}"
+            },
+            {
+              "name": "razoningreso"
+            },
+            {
+              "name": "id_tipoexpediente"
+            },
+            {
+              "name": "offset",
+              "value": "={{ $json.offsetPage.toString() }}"
+            },
+            {
+              "name": "limit",
+              "value": "={{ $json.itemsPerPage.toString() }}"
+            },
+            {
+              "name": "orderColumn",
+              "value": "FECHA_PRESENTACION"
+            },
+            {
+              "name": "orderDir",
+              "value": "desc"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -3008,
+        1600
+      ],
+      "id": "eafd0977-8a01-4258-b892-4ccf0e342115",
+      "name": "Fetch Approved this Year",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.link.pac }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2144,
+        1216
+      ],
+      "id": "0cd3b099-112e-4819-a836-c21524b4efc6",
+      "name": "Get PAC Records"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "data",
+              "cssSelector": "table.tabla-dinamica_pac td",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "cleanUpText": false
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -1936,
+        1216
+      ],
+      "id": "52a1c2c4-2f54-4442-8de5-468a47d2a82d",
+      "name": "HTML"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction toDate(str){ //from dd/MM/yyyy hh:mm:ss\n  const dateString = str;\n  const [datePart, timePart] = dateString.split(' ');\n  const [day, month, year] = datePart.split('/');\n  const [hours, minutes,seconds] = timePart.split(':');\n  \n  // Note: Months are 0-indexed in JS (Jan = 0, Dec = 11)\n  const dateObject = new Date(year, month - 1, day, hours, minutes,seconds);\n  return dateObject\n}\nfunction getLink(str){\n  \n  //const re = new RegExp(/[(http(s)?):\\/\\/(www\\.)?a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&//=]*)/,\"gi\");\n  //return re.exec(str)[0]\n  return str.split(\"]\")[0].split(\"[\")[1].replace(\"\\n\",\" \").replace(\"  \",\" \").replace(\" \",\"%20\")\n}\n/**\n * get number or PAC document record\n */\nfunction getIdDocument(str){\n  const re = new RegExp(/id_documento=(\\d+)/,\"ig\");\n  const res = re.exec(str)\n  \n  if (res){\n    console.log(res)\n    return \"https://seia.sea.gob.cl/documentos/verDestinatarios.php?id_documento=\"+res[1]\n  };\n\n  return str\n}\nfunction docType(str){\n  if (str.includes(\"inicio de PAC\")){\n    return \"Solicitud PAC\"\n  }else if(str.includes(\"Observación\") || str.includes(\"Observacion\") ){\n    return \"observación\"\n  }\n    else{\n    return str.split(\" \")[0].replace(\":\",\"\").toLowerCase()\n  }\n}\n\nfor (const item of $input.all()) {\n  const d = item.json.data;\n  \n  item.json.records = [];//init array\n  \n  const n_col = 8;\n  \n  for (let rowLoop = 0 ; rowLoop<=(item.json.data.length/n_col)-1;rowLoop++){\n    const n_from = rowLoop*n_col;\n    const link = getLink(d[n_from+3]);\n    const title = d[n_from+3].split(\"[\")[0].trim();\n\n    const compose = {\n      it:+d[n_from],\n      register:d[n_from+1]?d[n_from+1]:null,\n      dossier:d[n_from+2],\n      document:{\n        \"title\":title,\n        \"docType\":docType(title),\n        \"link\":link,\n        \"content\":null,\n        \"contentType\":link.includes(\"idDocumento\")?\"text\":\"file\"\n          },\n      from:d[n_from+4],\n      to:getIdDocument(d[n_from+5]),\n      recordDate:toDate(d[n_from+6]),\n    };\n    //to Pac records\n    item.json.records.push(compose)\n  };\n   delete item.json.data;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1728,
+        1216
+      ],
+      "id": "97ddae9e-1d59-477b-9ec0-c300eab040b8",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -1520,
+        1216
+      ],
+      "id": "0cbe1627-f0a1-4bdf-826d-f14b624933a3",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -1312,
+        1312
+      ],
+      "id": "8801cd51-4e8e-40bc-bc8d-9f4fd905b40b",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "e933b18a-4e91-473f-ada9-b3f9f6ebc95a",
+              "name": "to",
+              "value": "=[{{ $json.to }}]",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -880,
+        1488
+      ],
+      "id": "4e776161-8321-4be4-b84d-84e50b1f2090",
+      "name": "Destination Array Format"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.to }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -880,
+        1312
+      ],
+      "id": "88dc6ef1-006e-4c8d-b660-2e0692490884",
+      "name": "Request Addresser Docs"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -496,
+        1168
+      ],
+      "id": "6af03fa1-0c37-4c8c-a2e6-aed8b186ed3c",
+      "name": "Merge Addresser Object"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "destinationFieldName": "records",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        1568
+      ],
+      "id": "f6ab32de-45d7-412a-a248-73cf2d83bfa6",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1296,
+        1056
+      ],
+      "id": "e1e09361-bbc2-45d4-8d17-57d2ae3cc2c1",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "275841c7-8c3d-41a7-a852-bf2c000d9edc",
+              "name": "from",
+              "value": "={{ $json.from.includes(\"Evaluación\")?\"SEA\":$json.from }}",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -128,
+        1472
+      ],
+      "id": "c28830d1-d1f7-426d-bd98-90811b4976fa",
+      "name": "Reduce SEA name"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -320,
+        1472
+      ],
+      "id": "4e39969d-9edd-4d2d-a64f-25f376b1696d",
+      "name": "Merge Single+Many"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "numberInputs": 3,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        -944,
+        720
+      ],
+      "id": "add4320d-248f-4a5c-963f-0d0c6100feb1",
+      "name": "Merge1"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "to",
+              "cssSelector": "table.tablaFichaInterna td",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -688,
+        1312
+      ],
+      "id": "f845aced-2045-4f01-8555-5245a0ad7595",
+      "name": "Extract HTML Many Addressers"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4d6dcc15-2391-48ac-bef6-fd123fb6013d",
+              "name": "document.content",
+              "value": "={{ $json.data}}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        864,
+        1248
+      ],
+      "id": "3382e30e-ad98-41ab-bd9c-5435df3e96ed",
+      "name": "Edit Fields1",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1120,
+        1472
+      ],
+      "id": "c50618a3-6157-463b-be8a-3f24e2ec8cd1",
+      "name": "Merge2"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1296,
+        1568
+      ],
+      "id": "10222663-37ce-4b05-8758-89a6fbcf8a04",
+      "name": "Merge3"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "1dce8878-5716-48dc-ab48-1e3a39e7ca60",
+              "leftValue": "={{ $json.document.docType }}",
+              "rightValue": "=observación",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "ca1e194c-ec29-42ac-8c44-2b7a7e40a352",
+              "leftValue": "={{ $json.document.contentType }}",
+              "rightValue": "text",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        80,
+        1472
+      ],
+      "id": "aa87bb1a-48ff-4026-b9ee-1ba6e6dcafe5",
+      "name": "If Record is a citizen note"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.document.link }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        272,
+        1248
+      ],
+      "id": "9cf07ad5-d1be-4ef9-8415-78dde388969e",
+      "name": "HTTP Get Doc content",
+      "alwaysOutputData": true,
+      "executeOnce": false,
+      "retryOnFail": false,
+      "maxTries": 2,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "data",
+              "cssSelector": "p",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "cleanUpText": false
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        464,
+        1248
+      ],
+      "id": "9265022f-8782-4f75-a9d4-5c499d137a9d",
+      "name": "Extract Doc content",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "method": "=GET",
+        "url": "={{ $json.link.description }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        -2144,
+        880
+      ],
+      "id": "443a93ce-ffd0-4b8d-acd1-48a3b12615f3",
+      "name": "Get Description"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "069dcaa1-a948-47de-b0d9-397454380eff",
+              "name": "description",
+              "value": "={{ $json.description.compact() }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1728,
+        752
+      ],
+      "id": "5eb6ffd3-f232-4fac-9a5f-4b40e5e68b70",
+      "name": "Compact"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"description\" : {\n    \"about\":  {{ $json.description[0].toJsonString().replace(/\\n/g,' ') }},\n  \"goal\":{{ $json.description[$json.description.length-1].toJsonString().replace(/\\n/g,' ') }}\n  },\n}\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -1520,
+        752
+      ],
+      "id": "49b8b41e-f58b-4b48-a230-8c5cb72451bf",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "html": "<!DOCTYPE html>\n\n<html lang=\"es-CL\">\n<head>\n  <meta charset=\"UTF-8\" />\n  <title>Reporte {{ $json.name }}</title>\n</head>\n<body>\n  <div class=\"container\">\n    <h2>Reporte Participación Ciudadana SEA</h2>\n    <h1 class=\"name\">{{ $json.name }}</h1>\n    <h3>{{ $now.setLocale(\"es-CL\").toLocaleString({dateStyle:'full'}) }}</h3>\n\n  <section class=\"parent head-buttons\">\n    <table>\n      <tr>\n        <td><a href=\"{{ $json.link.description }}\" target=\"_blank\" rel=\"noopener noreferrer\">ficha📜</a></td>\n        <td><a href=\"{{ $json.link.dossiers }}\" target=\"_blank\" rel=\"noopener noreferrer\">expedientes🗄️</a></td>\n        <td><a href=\"{{ $json.link.pac }}\" target=\"_blank\" rel=\"noopener noreferrer\">participación👥</a></td>\n        <td><a class=\"{{ $json.location.status }}\" title=\"{{ $json.location.status }}\" href=\"{{ $json.location.map }}\" target=\"_blank\" rel=\"noopener noreferrer\">📍mapa</a></td>\n      </tr>\n    </table>\n  </section>\n  <section class=\"parent cheatsheet\">\n    <h2>Detalle</h2>\n    <table class=\"data\">\n      <tr>\n        <td>nombre</td>\n        <td>{{ $json.name }}</td>\n      </tr>\n      <tr>\n        <td>monto</td>\n        <td>USD$ {{ $json.details.budget.format(\"es-CL\") }}</td>\n      </tr>\n      <tr>\n        <td>propietario</td>\n        <td>{{ $json.details.owner }}</td>\n      </tr>\n      <tr>\n        <td>locación</td>\n        <td> {{ $json.location.city }}, {{ $json.location.region }} \n          <span class=\"location\" title={{ $json.location.status }}>\n            {{ $json.location.status==='map-valid'?\"✅\":$json.location.status==='map-invalid'?\"⛔\":\"⚠️\" }}\n          </span>\n        </td>\n      </tr>\n      \n    </table>\n    \n  </section>\n  \n  <section class=\"parent seasheet\">\n    <h2>Clasificación ambiental SEA</h2>\n    <table class=\"data\">\n      <tr>\n        <td>estado</td>\n        <td>{{ $json.status.stage }} \n          <span class=\"status {{ $json.status.frozen?\"pause\":\"active\" }}\"\n            title={{ $json.status.frozen?\"suspendido\":\"activo\" }}\n            >\n            {{ $json.status.frozen?\"suspenso\":\"activo\" }}\n          \n        </span></td>\n      </tr>\n      <tr>\n        <td>sistema</td>\n        <td>{{ $json.workflow }}</td>\n      </tr>\n      <tr>\n        <td>tipología</td>\n        <td>{{ $json.type.description }}, clase {{ $json.type.nom.toUpperCase() }}</td>\n      </tr>\n      <tr>\n        <td>ingreso</td>\n        <td>{{ $json.details.reason }}</td>\n      </tr>\n      <tr>\n        <td>fecha ingreso</td>\n        <td>\n          {{ $json.details.dateRegister.toDateTime().setLocale(\"es-CL\").toLocaleString({dateStyle:\"full\"}) }} \n          ({{ $json.details.dateRegister.toDateTime().setLocale(\"es-CL\").toRelative() }})\n        </td>\n      </tr>\n    </table>\n    \n  </section>\n  <section class=\"parent description\" title=\"descripción simple\">\n    <p>\n      {{ $json.description.about }}\n    </p>\n  </section>\n  <section class=\"parent pac-stats\">\n    <h2>Estadísticas de Participación</h2>\n    <article class=\"stats\">\n      <div class=\"update\">\n        último registro \n        <b>\n          {{ $json.stats.lastRecord.toDateTime().setLocale(\"es-CL\").toLocaleString({dateStyle:\"long\"})}}\n        </b>\n        ({{ $json.stats.lastRecord.toDateTime().setLocale(\"es-CL\").toRelative() }})\n      </div>\n      <table>\n        <tr>\n          <td>\n            <div class=\"card\">\n              <h4>🙋‍♂️PAC</h4>\n              <p class=\"amount\">{{ $json.stats[\"Solicitud PAC\"]??0 }}</p>\n              <p>solicita PAC</p>\n            </div>\n          </td>\n          <td>\n            <div class=\"card\">\n              <h4>👁️Obs</h4>\n              <p class=\"amount\">{{ $json.stats[\"observación\"]??0 }}</p>\n              <p>observaciones</p>\n            </div>\n          </td>\n          <td>\n            <div class=\"card\">\n              <h4>📜Info</h4>\n              <p class=\"amount\">{{ $json.stats[\"informe\"]??0 }}</p>\n              <p>informes</p>\n            </div>\n          </td>\n          <td>\n            <div class=\"card\">\n              <h4>⚖️RS</h4>\n              <p class=\"amount\">{{ $json.stats[\"resolución\"]??0 }}</p>\n              <p>resoluciones</p>\n            </div>\n          </td>\n          <td>\n            <a href=\"{{ $json.link.pac }}\" target=\"_blank\" rel=\"noreferrer noopener\">\n            <div class=\"card total\">\n              <h4>🗃️Docs</h4>\n              <p class=\"amount\">{{ $json.records.length }}</p>\n              <p>Total</p>\n            </div>\n            </a>\n          </td>\n        </tr>\n      </table>\n    </article>\n    \n  </section>\n    \n  <section class=\"parent reports\">\n    <h2>Informes, registros y resoluciones PAC</h2>\n    <table>\n        <tr>\n          <th>ID</th>\n          <th>fecha</th>\n          <th>título</th>\n          <th>link</th>\n        </tr>\n      {{ $json.records\n      .filter(i => i.document.docType === \"informe\" || i.document.docType === \"resolución\" || i.document.docType === \"registro\" )\n      .sort(i=>i.it)\n      .reverse()\n      .map(it=>{\n        return`<tr>\n          <td><span class=\"id\">${it.it}</span></td>\n          <td><span class=\"date\">${it.recordDate.toDateTime().setLocale(\"es-CL\").toLocaleString({dateStyle:\"short\"}).replaceAll(\"-\",\"/\")}</span></td>\n          <td>${it.document.title}</td>\n          <td><a href=\"${it.document.link}\" target=\"_blank\" rel=\"noopener noreferrer\">${it.document.docType===\"informe\"?\"📜Info\":\"⚖️RS\"}</a></td>\n      </tr>`}).join(\"\\n\")\n      }}\n    </table>\n  </section>\n  <section class=\"parent obs\">\n    <h2>Observaciones ciudadanas</h2>\n    <div class=\"update\"> \n      última observación el \n      <b>\n        {{ $json.records.filter(it => it.document.docType === \"observación\").last().recordDate.toDateTime().setLocale(\"es-CL\").toLocaleString({dateStyle:\"long\"}) }}\n      </b>\n        ({{ $json.records.filter(it => it.document.docType === \"observación\").last().recordDate.toDateTime().setLocale(\"es-CL\").toRelative() }})\n    </div>\n    <p class=\"note\">se excluyen textos incrustados en archivos (ej: pdf)</p>\n    <table>\n      <tbody>\n      {{ $json.records\n      .filter(i => i.document.docType === \"observación\" && i.document.content && i.document.content.comment)\n      .sort(i=>i.it)\n      .reverse()\n      .map(it=>{\n        return(`<tr>\n          <td>\n          <ul>\n            <li class=\"header\">\n            <div class=\"sender\">\n              <span class=\"id\"><a href=\"${it.document.link}\" target=\"_blank\" rel=\"noopener noreferrer\" >ID ${it.it}</a></span>\n              <span class=\"date\">${it.recordDate.toDateTime().setLocale(\"es-CL\").toLocaleString({dateStyle:\"short\"}).replaceAll(\"-\",\"/\")}</span>\n              ${it.document.content.sender}\n            </div>\n            <!--    \n            <div class=\"from\">\n            remite: ${it.from} \n            </div>\n            -->\n            </li>      \n        <li class=\"comment\">${it.document.content.comment}</li>\n          <ul>\n          </td>\n        </tr>\n          `)\n      }).join(\"\\n\")\n      }}\n      </tbody>\n    </table>\n    \n  </section>\n  \n</div>\n</body>\n</html>\n\n<style>\n  html,body{\n    box-sizing:content-box;\n    margin:0;\n    padding:0;\n    font-family:\"Segoe UI\";\n    font-size:14px;\n    --primary:#4a229a;\n    --secondary:#b392f0;\n    --accent:#d89bff;\n    --text:#545454;\n    --alert:#ff1e00;\n    --caption:#A4A4A4;\n    --valid:#74ba43;\n  }\n  body{\n    padding:1rem;\n    color:var(text);\n    /*background-color:var(--primary);*/\n  }\n  h1,h2,h3,h4{\n    margin:0;\n    padding:0;\n    font-weight:400;\n  }\n  h1.name{\n    font-size:1.5rem;\n    width:400px;\n    color:var(--secondary);\n    font-family:\"Trebuchet MS\"\n  }\n  h2{\n    font-size:1.1rem;\n    color:var(--caption);\n  }\n  h3{\n    font-size:.9rem;\n  }\n  .head-buttons{\n    margin-top:1rem;\n  }\n  .head-buttons a{\n    text-decoration:none;\n    padding:8px;\n    background-color:var(--secondary);\n    color:#ffffff;\n    font-size:.8rem;\n    border-radius:4px;\n    transition:background-color .1s ease-in-out\n  }\n  .head-buttons a:hover{\n    background-color:var(--primary);\n  }\n  .head-buttons a.map-invalid{\n    background:var(--alert);\n  }\n  .head-buttons a.map-no-point{\n    background:var(--caption);\n  }\n  .head-buttons a.map-valid{\n    background:var(--valid);\n  }\n  table.data tr td:first-child{\n    background-color:var(--secondary);\n    font-size:.8rem;\n    color:white;\n    padding:0 4px;\n    \n  }\n  \n  section.parent{\n    margin:1rem 0;\n    border: 1px solid var(--accent);\n    padding:1rem;\n    border-radius:4px;\n    background-color:#ffffff;\n    transition:border .3s ease-in-out,box-shadow .3s ease-in-out\n  }\n  section.parent:hover{\n    border: 1px solid white;\n    box-shadow:2px 2px 3px 3px var(--accent);\n  }\n\n\n  section.seasheet{\n    \n  }\n  section.seasheet .status{\n    color:#ffffff;\n    background-color:#000000;\n    font-size:.7rem;\n    font-weight:600;\n    padding:2px 8px;\n    border-radius:20px;\n    cursor:pointer;\n  }\n  .seasheet .status.active{\n      background-color:var(--valid);\n  }\n  .seasheet .status.pause{\n      background-color:var(--alert);\n  }\n  \n  section.description{\n    background-color:var(--secondary);\n    padding:1rem 1.25rem;\n    color:white;\n    font-family:Tahoma;\n    font-size:.9rem;\n  }\n  section.pac-stats *{\n    margin:0;\n    padding:0;\n    \n  }\n  section.pac-stats .card{\n    background-color:var(--secondary);\n    justify-items:center;\n    color:#ffffff;\n    padding:.5rem;\n    border-radius:4px;\n    min-width:5rem;\n\n  }\n  section.pac-stats .card h4{\n    font-size:1rem;\n  }\n  section.pac-stats .card p{\n    font-size:.75rem;\n  }\n  section.pac-stats td a{\n    text-decoration:none;\n  }\n  \n  section .update{\n    font-size:.9rem;\n    color:var(--primary);\n    margin:.5rem 0;\n  }\n  section.pac-stats .card .amount{\n    font-size:2rem;\n    color:var(--primary);\n    font-weight:600;\n  }\n  section.pac-stats .card.total{\n    background-color:var(--primary);\n    font-size:2rem;\n    color:var(--secondary);\n    font-weight:600;\n    transition:transform .2s ease-out;\n  }\n  section.pac-stats .card.total:hover{\n    transform:scale(1.05,1.05);\n  }\n  section.pac-stats .card.total .amount{\n    color:#ffffff;\n  }\n  /*Informes y registros*/\n  section.reports table{\n    font-size:.9rem;\n  }\n  section.reports table tr{\n    margin:.2rem 0;\n  }\n  section.reports table th{\n    color:var(--primary);\n    background-color:var(--secondary);\n    font-weight:500;\n  }\n  section.reports .id{\n    color:var(--caption);\n  }\n \n  section.reports a{\n    text-decoration:none;\n    color:var(--secondary);\n    padding:4px 6px;\n  }\n  section.reports a:hover{\n    background-color:var(--caption);\n    color:white;\n  }\n  /*Observaciones*/\n  section.obs td{\n    border:solid 1px var(--secondary);\n    border-radius:4px;\n  }\n  section.obs ul{\n    list-style-type: none;\n    padding: 0;\n    margin: 0;\n  }\n  section.obs .header{\n    background-color:var(--secondary);\n    border-radius:2px;\n    padding:.2rem 0;\n    color:var(--primary);\n  }\n  section.obs .header .sender{\n    font-weight:600;\n  }\n  section.obs .header .id{\n    background-color:var(--primary);\n    color:#ffffff;  \n    padding:2px 5px;\n    border-radius:2px;\n    border:2px solid var(--primary);\n    transition:border .2s ease-in-out; \n  }\n  section.obs .header .id:hover{\n    border:2px solid var(--secondary);\n  }\n  \n  section.obs .header .id a{\n    color:var(--secondary);\n    text-decoration:none;\n    font-size:.9rem;\n  }\n  span.date{\n    font-size:.8rem;\n    background-color:var(--caption);\n    padding:2px 4px;\n    border-radius:10px;\n    color:#eeeeee;\n  }\n  section.obs .comment{\n    font-size:0.9rem;\n    font-family:\"Tahoma\";\n    padding:.5rem;\n  }\n\n</style>"
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        128
+      ],
+      "id": "b2095b90-2f63-4ae4-8ba2-4a4cfd153d55",
+      "name": "Report HTML",
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "html": "={{ $json.html }}",
+        "destinationKey": "md",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.markdown",
+      "typeVersion": 1,
+      "position": [
+        368,
+        -16
+      ],
+      "id": "57cded6f-047a-4cb8-a50c-033209933766",
+      "name": "Markdown"
+    },
+    {
+      "parameters": {
+        "sortFieldsUi": {
+          "sortField": [
+            {
+              "fieldName": "it"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.sort",
+      "typeVersion": 1,
+      "position": [
+        1504,
+        1568
+      ],
+      "id": "2eb1b1ff-6541-465c-bae4-90be2114a359",
+      "name": "Sort PAC Records"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a6b657c8-88b6-409f-902b-d6c756b951cb",
+              "leftValue": "={{ $json.id }}",
+              "rightValue": 2165779734,
+              "operator": {
+                "type": "number",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -496,
+        128
+      ],
+      "id": "27aaa91e-d68b-4f1c-af78-f6dd12583aa7",
+      "name": "Filter",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfunction contentCompose(arr){\n  if(!arr){\n    return null\n  }\n\n  const  sender = arr[0].split(\":\")[1].trim();\n\n  const comment =arr\n    .filter(row=> !row.startsWith(\"Nombre\"))\n    .filter(row=> !row.startsWith(\"Obs\"))\n    .filter(row=> !row.startsWith(\"Firmas\"))\n    .filter(row=> !row.endsWith(\"]\"));\n  \n  return {sender,comment:comment.length>1?comment.join(\" \\n\").trim():null}\n}\n\nfor (const item of $input.all()) {\n  item.json.document.content = contentCompose(item.json.document.content );\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1072,
+        1248
+      ],
+      "id": "9f970051-a604-4603-8a63-7379fea6d094",
+      "name": "Code in JavaScript2",
+      "alwaysOutputData": true,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (const item of $input.all()) {\n  const allRecords = item.json.records\n  const allDates = allRecords.map(it=>it.recordDate);\n  const stats = {\n    firstRecord:allDates[0],\n    lastRecord : allDates[allDates.length-1]\n  }\n\n  \n  for (const it of allRecords){\n    //key exist in stats\n    if (!(it.document.docType in stats)){\n      stats[it.document.docType] = 1;\n    }else{\n      stats[it.document.docType]+=1;\n    } \n  }\n  item.json.stats = stats;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -672,
+        128
+      ],
+      "id": "1ad8a114-aa7a-4108-bc2b-bd607f690b5d",
+      "name": "Generate Stats2"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "html",
+        "binaryPropertyName": "=html",
+        "options": {
+          "encoding": "utf8",
+          "fileName": "={{ $json.shortName}}.html"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        176
+      ],
+      "id": "65985a6a-77c4-47cf-a5d9-e1ef46bfa292",
+      "name": "Convert to .html"
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "md",
+        "binaryPropertyName": "md",
+        "options": {
+          "encoding": "utf8",
+          "fileName": "={{ $json.shortName}}.md"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        560,
+        -16
+      ],
+      "id": "5e6d1b61-7ba4-4ba7-9a6e-182d4844879b",
+      "name": "Convert to .md"
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        112,
+        80
+      ],
+      "id": "f15aa6e4-d15a-464f-a502-91b37ad88956",
+      "name": "Merge4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        816,
+        96
+      ],
+      "id": "87da63b0-2e5d-411b-aa1d-603f7f376513",
+      "name": "All Files"
+    },
+    {
+      "parameters": {
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {}
+          ]
+        },
+        "options": {
+          "includeBinaries": true,
+          "keepOnlyUnique": false
+        }
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1024,
+        96
+      ],
+      "id": "3a674a46-8a35-440f-bed3-addaed22dbf4",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "operation": "compress",
+        "binaryPropertyName": "={{Object.keys($input.item.binary).join(\", \")}}",
+        "fileName": "=reporte PAC {{$now.toLocal().toISO().split(\"T\").first()}}.zip"
+      },
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1,
+      "position": [
+        1264,
+        96
+      ],
+      "id": "56dc771d-5f2a-49ab-87cf-e5942e5d33df",
+      "name": "Compression"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "77b6d525-07ec-48b7-8660-e6308e96ca46",
+              "name": "nombre",
+              "value": "={{ $json.nombreProyecto }}",
+              "type": "string"
+            },
+            {
+              "id": "e0faa12f-f101-461b-a2ac-57e0837cc79b",
+              "name": "itemsPerPage",
+              "value": "={{ $json.limite }}",
+              "type": "number"
+            },
+            {
+              "id": "d307e67b-7a4b-4e60-b7fb-bd7aab542ea9",
+              "name": "offsetPage",
+              "value": 1,
+              "type": "number"
+            },
+            {
+              "id": "b1479fc7-9008-4e3f-a55b-6554a6072706",
+              "name": "dateLimit",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "0ba476e3-b03b-45be-8464-ad907d1a99e8",
+              "name": "region",
+              "value": "={{ $json.zones }}",
+              "type": "array"
+            },
+            {
+              "id": "efdcdaa1-53e3-4521-902c-936d0ecc0106",
+              "name": "comuna",
+              "value": "[1189,1059,1098,1179,1187,1136,1177,1186,1101,1188,1061,1191,1185,1181,1144,1100,1176,1058,1173,1175,1171,1060,1015,1070,1183,1180,1076,1178,1174,1190,1145,1184,1029,1133,1182,1097,1071,1172]",
+              "type": "array"
+            },
+            {
+              "id": "7ddd2dcb-3f54-4894-8bf6-bfb8ca5ffd03",
+              "name": "sector_economico",
+              "value": 7,
+              "type": "number"
+            },
+            {
+              "id": "16c4d6ea-4419-4532-a861-5e4316920c8b",
+              "name": "statusProyecto",
+              "value": "={{ $json.status }}",
+              "type": "array"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3360,
+        1024
+      ],
+      "id": "a0650b09-696f-40d4-a347-2b9dcd998d58",
+      "name": "Fetch Settings"
+    },
+    {
+      "parameters": {
+        "operation": "extractHtmlContent",
+        "extractionValues": {
+          "values": [
+            {
+              "key": "description",
+              "cssSelector": ".sg-description-file p, .sg-description-file div",
+              "returnArray": true
+            }
+          ]
+        },
+        "options": {
+          "trimValues": true,
+          "cleanUpText": false
+        }
+      },
+      "type": "n8n-nodes-base.html",
+      "typeVersion": 1.2,
+      "position": [
+        -1936,
+        832
+      ],
+      "id": "c76091eb-c893-4ff8-9ad8-080e4cc9344f",
+      "name": "Extract Exp"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f7c6c8ca-aa6a-4dcd-9fbe-46dc0497b833",
+              "name": "nombreProyecto",
+              "value": "",
+              "type": "string"
+            },
+            {
+              "id": "1a2e6084-b1c2-4d97-8e43-467cdaa4b8ba",
+              "name": "valparaiso",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "3f08f55e-60ef-41cf-b962-225d357103d6",
+              "name": "interegional",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "ad5260da-35ba-4921-9e75-9748cdc955de",
+              "name": "abandonado",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "799484bb-396b-410d-a44f-f87578eb9efb",
+              "name": "aprobado",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "36157f78-f0ee-4493-8af0-2c41d99f84fe",
+              "name": "caducado",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "0d7c42b5-67dd-49bf-9fe9-545d007e4c0e",
+              "name": "desistido",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "fe68d98c-46aa-4484-a90b-18ecdd25d5b1",
+              "name": "enAdmision",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "abf25b73-4765-44fb-b9f1-f338a2cbf249",
+              "name": "calificacion",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "8c4c21bf-f911-4704-bf8a-6a74db44caee",
+              "name": "noAdmitido",
+              "value": false,
+              "type": "boolean"
+            },
+            {
+              "id": "02c61bf1-4845-44be-b4b2-1cd9dee51a41",
+              "name": "limite",
+              "value": 30,
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -3824,
+        1024
+      ],
+      "id": "4a7e288b-495d-4031-80ef-a3579c6e01e0",
+      "name": "Search config"
+    },
+    {
+      "parameters": {
+        "jsCode": "function getZone(valpo,ir){\n  const zones = []\n  if(valpo){zones.push(5)}\n  if (ir){zones.push(14)}\n  return zones\n}\n\nfunction getStatus(abandonado,aprobado,caducado,desistido,admision,calificacion,noAdmitido){\n  const status = []\n  if(abandonado){status.push(507)}\n  if(aprobado){status.push(4)}\n  if(caducado){status.push(1000)}\n  if(desistido){status.push(8)}\n  if(admision){status.push(2)}\n  if(calificacion){status.push(3)}\n  if(noAdmitido){status.push(6)}\n  return status\n}\n// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  const zones = getZone(item.json.valparaiso,item.json.interegional);\n  const status = getStatus(\n    item.json.abandonado,\n    item.json.aprobado,\n    item.json.caducado,\n    item.json.desistido,\n    item.json.enAdmision,\n    item.json.calificacion,\n    item.json.noAdmitido\n  );\n\n  item.json[\"zones\"] = zones;\n  item.json[\"status\"] = status;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3616,
+        1024
+      ],
+      "id": "e787d845-1a48-4d6c-b9ba-3f785d06917e",
+      "name": "Transform Input"
+    },
+    {
+      "parameters": {
+        "sendTo": "csalas@minenergia.cl",
+        "subject": "=Reporte PAC {{$now.setLocale(\"es-CL\").toLocaleString({dateStyle:\"short\"})}}",
+        "message": "=Reporte de actividades ciudadanas con fecha {{$now.setLocale(\"es-CL\").toLocaleString({dateStyle:\"full\"})}}",
+        "options": {
+          "attachmentsUi": {
+            "attachmentsBinary": [
+              {}
+            ]
+          },
+          "ccList": "ccamposn@minenergia.cl"
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1536,
+        80
+      ],
+      "id": "60383f04-bd16-4e92-bbef-aceed1b53a2c",
+      "name": "Send a message",
+      "webhookId": "341446b0-9b38-4423-9852-2b11c82254c1",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "p5dWthvou9c8aVCz",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "ee5fe254-2734-4cfc-8290-c314a035317c",
+              "leftValue": "={{$json.to}}",
+              "rightValue": "http",
+              "operator": {
+                "type": "string",
+                "operation": "startsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1136,
+        1312
+      ],
+      "id": "acf63190-f522-462a-9d08-719e8b696d4e",
+      "name": "If Many Addressers"
+    },
+    {
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={\n  \"id\":{{ $json.EXPEDIENTE_ID }},\n  \"name\":{{ $json.EXPEDIENTE_NOMBRE.toJsonString() }},\n  \"shortName\":{{ $json.shortName }},\n  \"workflow\":{{ $json.WORKFLOW_DESCRIPCION.toJsonString() }},\n  \"location\":{\n    \"region\":{{ $json.REGION_NOMBRE.toJsonString() }},\n    \"city\":{{ $json.COMUNA_NOMBRE.toJsonString() }},\n    \"map\":{{ \"https://seia.sea.gob.cl/mapa/visualizacion/PuntoRepresentativo/index.php?idExpediente=\"+$json.EXPEDIENTE_ID }},\n\"status\":{{ $json.LINK_MAPA.IMAGE.split(\".\")[0] }}\n    },\n  \"details\":{\n    \"owner\":{{ $json.TITULAR.toJsonString() }},\n    \"reason\":{{ $json.RAZON_INGRESO.toJsonString() }},\n    \"budget\":{{ $json.INVERSION_MM.toNumber() }},\n    \"dateRegister\":{{ $json.FECHA_PRESENTACION_FORMAT.toDateTime(\"dd/MM/yyyy\") }}\n  },\n  \"type\":{\n    \"nom\":{{ $json.TIPO_PROYECTO.toJsonString() }},\n    \"description\":{{ $json.DESCRIPCION_TIPOLOGIA.toJsonString() }},\n    \"legalDays\":{{ $json.DIAS_LEGALES.toNumber() }}\n  },\n  \"status\":{\n  \"stage\":{{ $json.ESTADO_PROYECTO }},\n    \"frozen\":{{ $json.SUSPENDIDO===\"Suspendido\"?true:false}}\n  },\n\"link\":{\n  \"description\":{{ $json.EXPEDIENTE_URL_FICHA }},\n  \"dossiers\":{{ \"https://seia.sea.gob.cl/expediente/xhr_expediente.php?incluyePac=1&id_expediente=\"+$json.EXPEDIENTE_ID }},\n  \"pac\":{{ \"https://seia.sea.gob.cl/expediente/xhr_documentos_pac.php?incluyePac=2&id_expediente=\"+$json.EXPEDIENTE_ID }}\n}\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -2336,
+        1216
+      ],
+      "id": "fe8e14e9-dab0-46c2-a878-a717dbe7300a",
+      "name": "Project Object Compose"
+    },
+    {
+      "parameters": {
+        "jsCode": "function genShortName(name){\n  const sn = name.replace(/(\\-|\\_|\\.|\\:|\\;|\\(|#)/i,\"\")\n    .replace(\",\",\"\")\n    .replace(\")\",\"\")\n    .replace(\"  \",\" \")\n.replace(/(Almacenamiento|Generación|Sistema|Planta|Proyecto|Declaración|Impacto|Ambiental|Modificación|Ampliación|\\sde|\\scon|baterías|parque)/gi,\"\");\n\n  const res = sn.trim()\n  \nreturn res[0].toUpperCase()+res.slice(1,res.length)\n}\nfor (const item of $input.all()) {\n  item.json.shortName = genShortName(item.json.EXPEDIENTE_NOMBRE);\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -2560,
+        1216
+      ],
+      "id": "11c5051d-156e-4cbd-bc73-350365bba450",
+      "name": "Gen shortName"
+    }
+  ],
+  "pinData": {
+    "Fetch Approved this Year": [
+      {
+        "json": {
+          "status": true,
+          "data": [
+            {
+              "EXPEDIENTE_ID": "2165225291",
+              "EXPEDIENTE_NOMBRE": "Modificación de Línea de Transmisión Eléctrica Proyecto Quinquimo Solar",
+              "EXPEDIENTE_URL_PPAL": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2165225291",
+              "EXPEDIENTE_URL_FICHA": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2165225291&modo=ficha",
+              "WORKFLOW_DESCRIPCION": "DIA",
+              "REGION_NOMBRE": "Región de Valparaíso",
+              "COMUNA_NOMBRE": "Papudo",
+              "TIPO_PROYECTO": "b1",
+              "RAZON_INGRESO": "Ingreso por tipología (art. 3 del D.S. N°40)",
+              "TITULAR": "QUINQUIMO SOLAR SPA",
+              "INVERSION_MM": "8.5E+7",
+              "INVERSION_MM_FORMAT": "85,0000",
+              "FECHA_PRESENTACION": "1748982984",
+              "FECHA_PRESENTACION_FORMAT": "03/06/2025",
+              "ESTADO_PROYECTO": "Aprobado",
+              "ENCARGADO": "",
+              "ACTIVIDAD_ACTUAL": "",
+              "FECHA_PLAZO": "",
+              "FECHA_PLAZO_FORMAT": "",
+              "ACCIONES": "",
+              "LINK_MAPA": {
+                "SHOW": true,
+                "URL": "/mapa/visualizacion/PuntoRepresentativo/index.php?idExpediente=2165225291",
+                "IMAGE": "map-valid.jpg"
+              },
+              "DESCRIPCION_TIPOLOGIA": "Líneas de transmisión eléctrica de alto voltaje",
+              "DIAS_LEGALES": "75",
+              "SUSPENDIDO": "Activo",
+              "VER_ACTIVIDAD": ""
+            },
+            {
+              "EXPEDIENTE_ID": "2164013374",
+              "EXPEDIENTE_NOMBRE": "Subestación Eléctrica Seccionadora Pachacama",
+              "EXPEDIENTE_URL_PPAL": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2164013374",
+              "EXPEDIENTE_URL_FICHA": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2164013374&modo=ficha",
+              "WORKFLOW_DESCRIPCION": "DIA",
+              "REGION_NOMBRE": "Región de Valparaíso",
+              "COMUNA_NOMBRE": "Calera",
+              "TIPO_PROYECTO": "b2",
+              "RAZON_INGRESO": "Ingreso por tipología (art. 3 del D.S. N°40)",
+              "TITULAR": "Sociedad Austral de Transmisión Troncal S.A.",
+              "INVERSION_MM": "1.9805822E+7",
+              "INVERSION_MM_FORMAT": "19,8058",
+              "FECHA_PRESENTACION": "1736281210",
+              "FECHA_PRESENTACION_FORMAT": "07/01/2025",
+              "ESTADO_PROYECTO": "Aprobado",
+              "ENCARGADO": "",
+              "ACTIVIDAD_ACTUAL": "",
+              "FECHA_PLAZO": "",
+              "FECHA_PLAZO_FORMAT": "",
+              "ACCIONES": "",
+              "LINK_MAPA": {
+                "SHOW": true,
+                "URL": "/mapa/visualizacion/PuntoRepresentativo/index.php?idExpediente=2164013374",
+                "IMAGE": "map-valid.jpg"
+              },
+              "DESCRIPCION_TIPOLOGIA": "Subestaciones",
+              "DIAS_LEGALES": "76",
+              "SUSPENDIDO": "Activo",
+              "VER_ACTIVIDAD": ""
+            },
+            {
+              "EXPEDIENTE_ID": "2163882228",
+              "EXPEDIENTE_NOMBRE": "Central Fotovoltaica Sol del Melón",
+              "EXPEDIENTE_URL_PPAL": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2163882228",
+              "EXPEDIENTE_URL_FICHA": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2163882228&modo=ficha",
+              "WORKFLOW_DESCRIPCION": "DIA",
+              "REGION_NOMBRE": "Región de Valparaíso",
+              "COMUNA_NOMBRE": "Nogales",
+              "TIPO_PROYECTO": "c",
+              "RAZON_INGRESO": "Ingreso por tipología (art. 3 del D.S. N°40)",
+              "TITULAR": "Sol del Melón SG SpA",
+              "INVERSION_MM": "3.5E+7",
+              "INVERSION_MM_FORMAT": "35,0000",
+              "FECHA_PRESENTACION": "1734556635",
+              "FECHA_PRESENTACION_FORMAT": "18/12/2024",
+              "ESTADO_PROYECTO": "Aprobado",
+              "ENCARGADO": "",
+              "ACTIVIDAD_ACTUAL": "",
+              "FECHA_PLAZO": "",
+              "FECHA_PLAZO_FORMAT": "",
+              "ACCIONES": "",
+              "LINK_MAPA": {
+                "SHOW": true,
+                "URL": "/mapa/visualizacion/PuntoRepresentativo/index.php?idExpediente=2163882228",
+                "IMAGE": "map-invalid.jpg"
+              },
+              "DESCRIPCION_TIPOLOGIA": "Centrales generadoras de energía mayores a 3 MW",
+              "DIAS_LEGALES": "77",
+              "SUSPENDIDO": "Activo",
+              "VER_ACTIVIDAD": ""
+            },
+            {
+              "EXPEDIENTE_ID": "2159052111",
+              "EXPEDIENTE_NOMBRE": "Parque Solar Alicanto",
+              "EXPEDIENTE_URL_PPAL": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2159052111",
+              "EXPEDIENTE_URL_FICHA": "https://seia.sea.gob.cl/expediente/expediente.php?id_expediente=2159052111&modo=ficha",
+              "WORKFLOW_DESCRIPCION": "DIA",
+              "REGION_NOMBRE": "Región de Valparaíso",
+              "COMUNA_NOMBRE": "Casablanca",
+              "TIPO_PROYECTO": "c",
+              "RAZON_INGRESO": "Ingreso previo a la publicación D.S. Nº30/2024,",
+              "TITULAR": "PSF Alicanto Solar SpA",
+              "INVERSION_MM": "1.25E+8",
+              "INVERSION_MM_FORMAT": "125,0000",
+              "FECHA_PRESENTACION": "1682019564",
+              "FECHA_PRESENTACION_FORMAT": "20/04/2023",
+              "ESTADO_PROYECTO": "Aprobado",
+              "ENCARGADO": "",
+              "ACTIVIDAD_ACTUAL": "",
+              "FECHA_PLAZO": "",
+              "FECHA_PLAZO_FORMAT": "",
+              "ACCIONES": "",
+              "LINK_MAPA": {
+                "SHOW": true,
+                "URL": "/mapa/visualizacion/PuntoRepresentativo/index.php?idExpediente=2159052111",
+                "IMAGE": "map-invalid.jpg"
+              },
+              "DESCRIPCION_TIPOLOGIA": "Centrales generadoras de energía mayores a 3 MW",
+              "DIAS_LEGALES": "86",
+              "SUSPENDIDO": "Activo",
+              "VER_ACTIVIDAD": ""
+            }
+          ],
+          "pages": null,
+          "orderColumn": "FECHA_PRESENTACION",
+          "orderDir": "DESC",
+          "inversion": "264,8058",
+          "totalRegistros": "4",
+          "recordsTotal": "4",
+          "recordsFiltered": "4",
+          "total_proyectos_georreferenciados": 4,
+          "total_proyectos_validados": 2,
+          "total_proyectos_parcialmente_validados": 0
+        },
+        "pairedItem": {
+          "item": 0
+        }
+      }
+    ]
+  },
+  "connections": {
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Sea Web Tools",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Search config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sea Web Tools": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Fetch On Evaluation",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Fetch Approved this Year",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project list": {
+      "main": [
+        [
+          {
+            "node": "Gen shortName",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch On Evaluation": {
+      "main": [
+        [
+          {
+            "node": "Project list",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Approved this Year": {
+      "main": [
+        [
+          {
+            "node": "Project list1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get PAC Records": {
+      "main": [
+        [
+          {
+            "node": "HTML",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTML": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "If Many Addressers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Destination Array Format": {
+      "main": [
+        [
+          {
+            "node": "Merge Single+Many",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Request Addresser Docs": {
+      "main": [
+        [
+          {
+            "node": "Extract HTML Many Addressers",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Addresser Object": {
+      "main": [
+        [
+          {
+            "node": "Merge Single+Many",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reduce SEA name": {
+      "main": [
+        [
+          {
+            "node": "If Record is a citizen note",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge Single+Many": {
+      "main": [
+        [
+          {
+            "node": "Reduce SEA name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Extract HTML Many Addressers": {
+      "main": [
+        [
+          {
+            "node": "Merge Addresser Object",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge2": {
+      "main": [
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge3": {
+      "main": [
+        [
+          {
+            "node": "Sort PAC Records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Record is a citizen note": {
+      "main": [
+        [
+          {
+            "node": "HTTP Get Doc content",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Merge3",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "HTTP Get Doc content": {
+      "main": [
+        [
+          {
+            "node": "Extract Doc content",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Doc content": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge1": {
+      "main": [
+        [
+          {
+            "node": "Generate Stats2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Description": {
+      "main": [
+        [
+          {
+            "node": "Extract Exp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compact": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Report HTML": {
+      "main": [
+        [
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Markdown": {
+      "main": [
+        [
+          {
+            "node": "Convert to .md",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort PAC Records": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Report HTML",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript2": {
+      "main": [
+        [
+          {
+            "node": "Merge2",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Generate Stats2": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to .md": {
+      "main": [
+        [
+          {
+            "node": "All Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to .html": {
+      "main": [
+        [
+          {
+            "node": "All Files",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge4": {
+      "main": [
+        [
+          {
+            "node": "Markdown",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Convert to .html",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Files": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Compression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Settings": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Exp": {
+      "main": [
+        [
+          {
+            "node": "Compact",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search config": {
+      "main": [
+        [
+          {
+            "node": "Transform Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transform Input": {
+      "main": [
+        [
+          {
+            "node": "Fetch Settings",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compression": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Many Addressers": {
+      "main": [
+        [
+          {
+            "node": "Merge Addresser Object",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Request Addresser Docs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Destination Array Format",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Project Object Compose": {
+      "main": [
+        [
+          {
+            "node": "Get PAC Records",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Merge1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get Description",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gen shortName": {
+      "main": [
+        [
+          {
+            "node": "Project Object Compose",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "ca66940c-1e6c-4e65-9718-1f7ae7cb2ad6",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e00edacc3fdcf61b9ada9dadd8895899ff50d49e5ba33e116feac1e850f1db20"
+  },
+  "id": "11III80tF6bIujsI",
+  "tags": []
+}
