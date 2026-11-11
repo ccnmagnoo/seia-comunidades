@@ -35,20 +35,41 @@ export function buildHtmlReport(detail: ProjectDetail, generatedAt: string): str
     .join('');
 
   const observationCards = observations
-    .map(
-      (observation) => `
+    .map((observation) => {
+      const analysis = observation.analysis;
+      const comments = analysis?.comments ?? [];
+      return `
       <article class="observation">
         <header>
           <span class="pill">${escapeHtml(observation.category)}</span>
           <span class="pill">${escapeHtml(SENTIMENT_LABELS[observation.sentiment] ?? observation.sentiment)}</span>
+          ${analysis?.flagged ? '<span class="pill flag">Marcada</span>' : ''}
+          ${analysis ? `<span class="pill">${escapeHtml(reviewStatusLabel(analysis.status))}</span>` : ''}
           <span class="muted">${formatDate(observation.date)}</span>
         </header>
         <h4>${escapeHtml(observation.sender)}</h4>
         <p class="subject">${escapeHtml(observation.subject ?? '')}</p>
         <p class="content">${escapeHtml(observation.content || observation.summary)}</p>
         <p class="meta">Importancia: ${Math.round(observation.importance * 100)}% · Palabras clave: ${escapeHtml(observation.keywords.join(', '))}</p>
-      </article>`,
-    )
+        ${
+          comments.length > 0
+            ? `<div class="analysis">
+                <strong>Análisis del analista</strong>
+                <ul>
+                  ${comments
+                    .map(
+                      (comment) => `<li>
+                        <span class="analysis-meta">${escapeHtml(comment.author)} · ${formatDateTime(comment.createdAt)}</span>
+                        <p>${escapeHtml(comment.content)}</p>
+                      </li>`,
+                    )
+                    .join('')}
+                </ul>
+              </div>`
+            : ''
+        }
+      </article>`;
+    })
     .join('');
 
   const timelineItems = timeline
@@ -106,7 +127,14 @@ export function buildHtmlReport(detail: ProjectDetail, generatedAt: string): str
   .observation .content { margin-top: 5px; white-space: pre-line; }
   .observation .meta { margin-top: 5px; color: #64748b; font-size: 9px; }
   .pill { display: inline-block; padding: 1px 7px; border-radius: 999px; background: #e0f2fe; color: #0369a1; font-size: 8px; font-weight: 700; text-transform: uppercase; }
+  .pill.flag { background: #fef3c7; color: #b45309; }
   .muted { color: #64748b; }
+  .analysis { margin-top: 7px; padding: 7px 8px; border-left: 3px solid #a78bfa; background: #faf5ff; font-size: 9px; }
+  .analysis > strong { color: #6d28d9; text-transform: uppercase; letter-spacing: .06em; font-size: 8px; }
+  .analysis ul { margin: 4px 0 0; padding: 0; list-style: none; }
+  .analysis li { margin-top: 4px; }
+  .analysis-meta { color: #7c3aed; font-size: 8px; }
+  .analysis p { margin-top: 1px; white-space: pre-line; }
   .timeline { list-style: none; padding: 0; margin: 8px 0 0; }
   .timeline li { border-left: 2px solid #bae6fd; padding: 0 0 8px 10px; }
   .timeline .date { display: block; color: #0284c7; font-size: 9px; }
@@ -202,6 +230,20 @@ export function buildMarkdownReport(detail: ProjectDetail, generatedAt: string):
     if (observation.keywords.length > 0) {
       lines.push(`**Palabras clave:** ${observation.keywords.join(', ')}`, '');
     }
+    if (observation.analysis) {
+      lines.push(
+        `**Marcada:** ${observation.analysis.flagged ? 'Sí' : 'No'} · **Estado de revisión:** ${reviewStatusLabel(observation.analysis.status)}`,
+        '',
+      );
+      for (const comment of observation.analysis.comments) {
+        lines.push(
+          `> **${comment.author}** · ${formatDateTime(comment.createdAt)}`,
+          '>',
+          `> ${comment.content.replace(/\n/g, '\n> ')}`,
+          '',
+        );
+      }
+    }
   }
 
   lines.push('## Línea de tiempo', '');
@@ -237,6 +279,10 @@ export function buildCsvReport(detail: ProjectDetail): string {
       'resumen',
       'contenido',
       'documento_url',
+      'marcada',
+      'estado_revision',
+      'comentarios_count',
+      'comentarios_analista',
     ];
     const rows = observations.map((observation) => [
       observation.id,
@@ -251,6 +297,12 @@ export function buildCsvReport(detail: ProjectDetail): string {
       observation.summary,
       observation.content,
       observation.sourceUrl,
+      observation.analysis?.flagged ? 'Sí' : 'No',
+      reviewStatusLabel(observation.analysis?.status ?? 'pending'),
+      String(observation.analysis?.comments.length ?? 0),
+      observation.analysis?.comments
+        .map((comment) => `${comment.author} (${comment.createdAt}): ${comment.content}`)
+        .join(' | ') ?? '',
     ]);
     return toCsv([header, ...rows]);
   }
@@ -331,4 +383,14 @@ function formatMoney(value: number | undefined): string {
     currency: 'USD',
     maximumFractionDigits: 0,
   }).format(value);
+}
+
+function reviewStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    pending: 'Pendiente',
+    reviewed: 'Revisada',
+    relevant: 'Relevante',
+    dismissed: 'Descartada',
+  };
+  return labels[status] ?? status;
 }

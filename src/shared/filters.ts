@@ -1,6 +1,7 @@
 import { z } from 'zod';
 import { PacDocumentSchema } from '../domain/pac/pac-document';
-import { ObservationSchema } from '../domain/observation/observation';
+import { ObservationViewSchema } from '../domain/observation/annotation';
+import { ObservationReviewStatusSchema } from '../domain/observation/annotation';
 import { NoteSchema } from '../domain/note/note';
 import { ProjectSchema } from '../domain/project/project';
 import { TimelineEventSchema } from '../domain/timeline/timeline';
@@ -28,6 +29,39 @@ export const ObservationFiltersSchema = z.object({
 });
 
 export type ObservationFilters = z.infer<typeof ObservationFiltersSchema>;
+
+export const ObservationAnalysisPatchSchema = z.object({
+  flagged: z.boolean().optional(),
+  status: ObservationReviewStatusSchema.optional(),
+});
+
+export type ObservationAnalysisPatch = z.infer<typeof ObservationAnalysisPatchSchema>;
+
+export const ObservationCommentInputSchema = z.object({
+  projectId: z.string().min(1),
+  observationId: z.string().min(1),
+  author: z.string().trim().min(1).default('Operador local'),
+  content: z.string().trim().min(1).max(20_000),
+});
+
+export type ObservationCommentInput = z.infer<typeof ObservationCommentInputSchema>;
+
+export const ObservationCommentUpdateSchema = z.object({
+  projectId: z.string().min(1),
+  observationId: z.string().min(1),
+  commentId: z.string().min(1),
+  content: z.string().trim().min(1).max(20_000),
+});
+
+export type ObservationCommentUpdate = z.infer<typeof ObservationCommentUpdateSchema>;
+
+export const ObservationCommentDeleteSchema = z.object({
+  projectId: z.string().min(1),
+  observationId: z.string().min(1),
+  commentId: z.string().min(1),
+});
+
+export type ObservationCommentDelete = z.infer<typeof ObservationCommentDeleteSchema>;
 
 export const SearchCriteriaSchema = z.object({
   name: z.string().optional(),
@@ -91,7 +125,7 @@ export type SyncDetailsResult = z.infer<typeof SyncDetailsResultSchema>;
 export const ProjectDetailSchema = z.object({
   project: ProjectSchema,
   pac: z.array(PacDocumentSchema),
-  observations: z.array(ObservationSchema),
+  observations: z.array(ObservationViewSchema),
   timeline: z.array(TimelineEventSchema),
   notes: z.array(NoteSchema),
 });

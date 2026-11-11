@@ -3,6 +3,7 @@ import type { SearchHit } from '../../shared/search';
 import type { Logger } from '../../shared/logger';
 import type { ProjectRepository } from '../repositories/project-repository';
 import type { ObservationRepository } from '../repositories/observation-repository';
+import type { ObservationAnnotationRepository } from '../repositories/annotation-repository';
 import type { NoteRepository } from '../repositories/note-repository';
 import { normalizeText } from '../../domain/common/text';
 
@@ -23,6 +24,7 @@ export class SearchService {
   constructor(
     private readonly projects: ProjectRepository,
     private readonly observations: ObservationRepository,
+    private readonly annotations: ObservationAnnotationRepository,
     private readonly notes: NoteRepository,
     private readonly logger: Logger,
   ) {}
@@ -59,11 +61,15 @@ export class SearchService {
     this.index = createIndex();
     this.documents = new Map();
 
-    const [projects, observations, notes] = await Promise.all([
+    const [projects, observations, annotations, notes] = await Promise.all([
       this.projects.all(),
       this.observations.all(),
+      this.annotations.all(),
       this.notes.all(),
     ]);
+    const annotationByObservation = new Map(
+      annotations.map((annotation) => [annotation.observationId, annotation]),
+    );
 
     for (const project of projects) {
       this.add({
@@ -88,16 +94,20 @@ export class SearchService {
     }
 
     for (const observation of observations) {
+      const annotation = annotationByObservation.get(observation.id);
       this.add({
         id: `observation:${observation.id}`,
         kind: 'observation',
         projectId: observation.projectId,
-        title: `${observation.category} · ${observation.sender}`,
+        title: `${annotation?.flagged ? 'Marcada · ' : ''}${observation.category} · ${observation.sender}`,
         content: [
           observation.summary,
           observation.content,
           observation.keywords.join(' '),
           observation.sender,
+          annotation?.status,
+          annotation?.flagged ? 'marcada seguimiento' : '',
+          ...(annotation?.comments.map((comment) => `${comment.author}: ${comment.content}`) ?? []),
         ]
           .filter(Boolean)
           .join(' '),

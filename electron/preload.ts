@@ -39,6 +39,15 @@ const api: SeiaApi = {
   },
   observations: {
     list: (filters) => invoke(IPC_CHANNELS.observationsList, filters),
+    updateAnalysis: (projectId, observationId, patch) =>
+      invoke(IPC_CHANNELS.observationsUpdateAnalysis, {
+        projectId,
+        observationId,
+        patch,
+      }),
+    addComment: (input) => invoke(IPC_CHANNELS.observationsAddComment, input),
+    updateComment: (input) => invoke(IPC_CHANNELS.observationsUpdateComment, input),
+    deleteComment: (input) => invoke(IPC_CHANNELS.observationsDeleteComment, input),
   },
   notes: {
     list: (projectId) => invoke(IPC_CHANNELS.notesList, projectId),

@@ -4,8 +4,10 @@ import {
   Activity,
   AlertTriangle,
   ArrowRight,
+  Flag,
   FolderSearch,
   MapPin,
+  MessageSquare,
   Users,
 } from 'lucide-react';
 import { Chart, chartTheme } from '../components/Chart';
@@ -155,7 +157,7 @@ function DashboardContent() {
         </LinkButton>
       </header>
 
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
         <StatCard
           label="Expedientes"
           value={formatInt(data.totalProjects)}
@@ -173,6 +175,18 @@ function DashboardContent() {
           value={formatInt(data.observationsTotal)}
           hint={`${formatInt(data.newObservations7d)} en los últimos 7 días`}
           icon={<Activity className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Marcadas"
+          value={formatInt(data.flaggedObservations)}
+          hint="Observaciones en seguimiento"
+          icon={<Flag className="h-4 w-4" />}
+        />
+        <StatCard
+          label="Con comentarios"
+          value={formatInt(data.observationsWithComments)}
+          hint="Observaciones con análisis interno"
+          icon={<MessageSquare className="h-4 w-4" />}
         />
         <StatCard
           label="Críticos"
@@ -219,6 +233,36 @@ function DashboardContent() {
               </CardContent>
             </Card>
           </section>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Estado de revisión de observaciones</CardTitle>
+              <CardDescription>
+                Distribución del análisis interno de las observaciones ciudadanas.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {data.byReviewStatus.length === 0 ? (
+                <p className="text-sm text-muted-foreground">Sin observaciones registradas.</p>
+              ) : (
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                  {data.byReviewStatus.map((point) => (
+                    <div
+                      key={point.label}
+                      className="rounded-xl border border-border bg-muted/30 p-3"
+                    >
+                      <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                        {point.label}
+                      </p>
+                      <p className="mt-1 text-2xl font-semibold text-foreground">
+                        {formatInt(point.value)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           <Card>
             <CardHeader className="flex-row items-center justify-between">

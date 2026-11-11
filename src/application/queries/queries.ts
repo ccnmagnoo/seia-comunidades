@@ -1,12 +1,18 @@
 import type { ProjectRepository } from '../../infrastructure/repositories/project-repository';
 import type { PacDocumentRepository } from '../../infrastructure/repositories/pac-repository';
 import type { ObservationRepository } from '../../infrastructure/repositories/observation-repository';
+import type { ObservationAnnotationRepository } from '../../infrastructure/repositories/annotation-repository';
 import type { NoteRepository } from '../../infrastructure/repositories/note-repository';
 import type { TimelineRepository } from '../../infrastructure/repositories/timeline-repository';
 import type { CatalogRepository } from '../../infrastructure/repositories/catalog-repository';
 import type { SeiaGateway } from '../ports/seia-gateway';
 import type { Catalog } from '../../domain/common/catalog';
 import type { DashboardStats } from '../../domain/report/dashboard-stats';
+import type {
+  ObservationAnnotation,
+  ObservationView,
+} from '../../domain/observation/annotation';
+import type { Observation } from '../../domain/observation/observation';
 import type { ProjectSummary } from '../../domain/project/project';
 import { toProjectSummary } from '../../domain/project/project';
 import type {
@@ -29,27 +35,42 @@ export class GetProjectDetailQuery {
     private readonly projects: ProjectRepository,
     private readonly pacDocuments: PacDocumentRepository,
     private readonly observations: ObservationRepository,
+    private readonly annotations: ObservationAnnotationRepository,
     private readonly notes: NoteRepository,
     private readonly timelines: TimelineRepository,
   ) {}
 
   async execute(projectId: string): Promise<ProjectDetail> {
     const project = await this.projects.getOrThrow(projectId);
-    const [pac, observations, timeline, notes] = await Promise.all([
+    const [pac, observations, annotations, timeline, notes] = await Promise.all([
       this.pacDocuments.list(projectId),
       this.observations.list({ projectId }),
+      this.annotations.list(projectId),
       this.timelines.get(projectId),
       this.notes.list(projectId),
     ]);
-    return { project, pac, observations, timeline, notes };
+    return {
+      project,
+      pac,
+      observations: joinAnnotations(observations, annotations),
+      timeline,
+      notes,
+    };
   }
 }
 
 export class ListObservationsQuery {
-  constructor(private readonly observations: ObservationRepository) {}
+  constructor(
+    private readonly observations: ObservationRepository,
+    private readonly annotations: ObservationAnnotationRepository,
+  ) {}
 
-  async execute(filters: ObservationFilters) {
-    return this.observations.list(filters);
+  async execute(filters: ObservationFilters): Promise<ObservationView[]> {
+    const [observations, annotations] = await Promise.all([
+      this.observations.list(filters),
+      this.annotations.list(filters.projectId),
+    ]);
+    return joinAnnotations(observations, annotations);
   }
 }
 
@@ -73,17 +94,34 @@ export class DashboardStatsQuery {
   constructor(
     private readonly projects: ProjectRepository,
     private readonly observations: ObservationRepository,
+    private readonly annotations: ObservationAnnotationRepository,
   ) {}
 
   async execute(): Promise<DashboardStats> {
-    const [projects, observations] = await Promise.all([
+    const [projects, observations, annotations] = await Promise.all([
       this.projects.all(),
       this.observations.all(),
+      this.annotations.all(),
     ]);
 
     const byRegion = countBy(projects.map((project) => project.location.region));
     const byStatus = countBy(projects.map((project) => project.status));
     const cutoff = new Date(Date.now() - 7 * 86_400_000).toISOString().slice(0, 10);
+    const annotationByObservation = new Map(
+      annotations.map((annotation) => [annotation.observationId, annotation]),
+    );
+    const statusLabels: Record<string, string> = {
+      pending: 'Pendiente',
+      reviewed: 'Revisada',
+      relevant: 'Relevante',
+      dismissed: 'Descartada',
+    };
+    const byReviewStatus = countBy(
+      observations.map((observation) => {
+        const annotation = annotationByObservation.get(observation.id);
+        return statusLabels[annotation?.status ?? 'pending'] ?? 'Pendiente';
+      }),
+    );
 
     return {
       totalProjects: projects.length,
@@ -95,6 +133,14 @@ export class DashboardStatsQuery {
       ).length,
       observationsTotal: observations.length,
       newObservations7d: observations.filter((observation) => observation.date >= cutoff).length,
+      flaggedObservations: observations.filter(
+        (observation) => annotationByObservation.get(observation.id)?.flagged,
+      ).length,
+      observationsWithComments: observations.filter(
+        (observation) =>
+          (annotationByObservation.get(observation.id)?.comments.length ?? 0) > 0,
+      ).length,
+      byReviewStatus: toChartPoints(byReviewStatus),
       byRegion: toChartPoints(byRegion),
       byStatus: toChartPoints(byStatus),
       observationsByMonth: observationsByMonth(observations.map((item) => item.date)),
@@ -127,6 +173,19 @@ export class CatalogQuery {
       return current;
     }
   }
+}
+
+function joinAnnotations(
+  observations: Observation[],
+  annotations: ObservationAnnotation[],
+): ObservationView[] {
+  const byObservation = new Map(
+    annotations.map((annotation) => [annotation.observationId, annotation]),
+  );
+  return observations.map((observation) => ({
+    ...observation,
+    analysis: byObservation.get(observation.id) ?? null,
+  }));
 }
 
 function countBy(values: string[]): Map<string, number> {

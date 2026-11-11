@@ -1,11 +1,18 @@
 import type { Catalog } from '../domain/common/catalog';
 import type { DashboardStats } from '../domain/report/dashboard-stats';
 import type { Note } from '../domain/note/note';
-import type { Observation } from '../domain/observation/observation';
+import type {
+  ObservationAnnotation,
+  ObservationView,
+} from '../domain/observation/annotation';
 import type { ProjectSummary } from '../domain/project/project';
 import type { TimelineEvent } from '../domain/timeline/timeline';
 import type {
   NoteInput,
+  ObservationAnalysisPatch,
+  ObservationCommentDelete,
+  ObservationCommentInput,
+  ObservationCommentUpdate,
   ObservationFilters,
   ProjectDetail,
   ProjectFilters,
@@ -29,6 +36,10 @@ export const IPC_CHANNELS = {
   projectsSyncDetails: 'projects:sync-details',
   projectsUpdateTracking: 'projects:update-tracking',
   observationsList: 'observations:list',
+  observationsUpdateAnalysis: 'observations:update-analysis',
+  observationsAddComment: 'observations:add-comment',
+  observationsUpdateComment: 'observations:update-comment',
+  observationsDeleteComment: 'observations:delete-comment',
   notesList: 'notes:list',
   notesSave: 'notes:save',
   notesDelete: 'notes:delete',
@@ -77,7 +88,15 @@ export interface SeiaApi {
     ) => Promise<ProjectSummary>;
   };
   observations: {
-    list: (filters: ObservationFilters) => Promise<Observation[]>;
+    list: (filters: ObservationFilters) => Promise<ObservationView[]>;
+    updateAnalysis: (
+      projectId: string,
+      observationId: string,
+      patch: ObservationAnalysisPatch,
+    ) => Promise<ObservationAnnotation>;
+    addComment: (input: ObservationCommentInput) => Promise<ObservationAnnotation>;
+    updateComment: (input: ObservationCommentUpdate) => Promise<ObservationAnnotation>;
+    deleteComment: (input: ObservationCommentDelete) => Promise<ObservationAnnotation>;
   };
   notes: {
     list: (projectId: string) => Promise<Note[]>;

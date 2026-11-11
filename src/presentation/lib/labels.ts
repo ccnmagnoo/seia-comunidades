@@ -26,6 +26,29 @@ export function kindVariant(kind: string): BadgeTone {
   }
 }
 
+export function reviewStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    pending: 'Pendiente',
+    reviewed: 'Revisada',
+    relevant: 'Relevante',
+    dismissed: 'Descartada',
+  };
+  return labels[status] ?? status;
+}
+
+export function reviewStatusVariant(status: string): BadgeTone {
+  switch (status) {
+    case 'reviewed':
+      return 'green';
+    case 'relevant':
+      return 'amber';
+    case 'dismissed':
+      return 'red';
+    default:
+      return 'slate';
+  }
+}
+
 export function sentimentVariant(sentiment: string): BadgeTone {
   if (sentiment === 'positive') return 'green';
   if (sentiment === 'negative') return 'red';

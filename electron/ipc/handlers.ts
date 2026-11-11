@@ -8,6 +8,10 @@ import { IPC_CHANNELS, IPC_EVENTS } from '../../src/shared/ipc';
 import type { IpcResult } from '../../src/shared/ipc';
 import {
   NoteInputSchema,
+  ObservationAnalysisPatchSchema,
+  ObservationCommentDeleteSchema,
+  ObservationCommentInputSchema,
+  ObservationCommentUpdateSchema,
   ObservationFiltersSchema,
   ProjectFiltersSchema,
   SearchCriteriaSchema,
@@ -59,6 +63,39 @@ export function registerIpcHandlers(container: Container): void {
 
   handle(container, IPC_CHANNELS.observationsList, ObservationFiltersSchema, async (filters) =>
     container.listObservations.execute(filters),
+  );
+
+  handle(
+    container,
+    IPC_CHANNELS.observationsUpdateAnalysis,
+    z.object({
+      projectId: z.string().min(1),
+      observationId: z.string().min(1),
+      patch: ObservationAnalysisPatchSchema,
+    }),
+    async ({ projectId, observationId, patch }) =>
+      container.updateObservationAnalysis.execute(projectId, observationId, patch),
+  );
+
+  handle(
+    container,
+    IPC_CHANNELS.observationsAddComment,
+    ObservationCommentInputSchema,
+    async (input) => container.addObservationComment.execute(input),
+  );
+
+  handle(
+    container,
+    IPC_CHANNELS.observationsUpdateComment,
+    ObservationCommentUpdateSchema,
+    async (input) => container.updateObservationComment.execute(input),
+  );
+
+  handle(
+    container,
+    IPC_CHANNELS.observationsDeleteComment,
+    ObservationCommentDeleteSchema,
+    async (input) => container.deleteObservationComment.execute(input),
   );
 
   handle(container, IPC_CHANNELS.notesList, projectIdSchema, async (projectId) =>

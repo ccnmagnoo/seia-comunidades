@@ -7,6 +7,7 @@ import type { WorkspacePaths } from '../src/app/config';
 import { TomlStore } from '../src/infrastructure/repositories/toml-store';
 import { ProjectRepository } from '../src/infrastructure/repositories/project-repository';
 import { ObservationRepository } from '../src/infrastructure/repositories/observation-repository';
+import { ObservationAnnotationRepository } from '../src/infrastructure/repositories/annotation-repository';
 import { NoteRepository } from '../src/infrastructure/repositories/note-repository';
 import { SearchService } from '../src/infrastructure/indexing/search-service';
 import { noopLogger } from '../src/shared/logger';
@@ -57,6 +58,25 @@ beforeAll(async () => {
     updatedAt: now,
   });
 
+  await new ObservationAnnotationRepository(paths, store).save({
+    schemaVersion: 1,
+    observationId: 'OBS-1',
+    projectId: '1',
+    flagged: true,
+    status: 'relevant',
+    createdAt: now,
+    updatedAt: now,
+    comments: [
+      {
+        id: 'cmt-1',
+        author: 'Carlos Campos',
+        createdAt: now,
+        updatedAt: now,
+        content: 'Seguimiento especial de la comunidad.',
+      },
+    ],
+  });
+
   await new NoteRepository(paths, store).save({
     projectId: '1',
     author: 'Carlos Campos',
@@ -77,6 +97,7 @@ describe('SearchService', () => {
     const service = new SearchService(
       new ProjectRepository(paths, store),
       new ObservationRepository(paths, store),
+      new ObservationAnnotationRepository(paths, store),
       new NoteRepository(paths, store),
       noopLogger,
     );
@@ -86,6 +107,9 @@ describe('SearchService', () => {
 
     const observations = await service.query('turismo');
     expect(observations.some((hit) => hit.kind === 'observation')).toBe(true);
+
+    const comments = await service.query('seguimiento');
+    expect(comments.some((hit) => hit.kind === 'observation')).toBe(true);
 
     const notes = await service.query('planificacion');
     expect(notes.some((hit) => hit.kind === 'note')).toBe(true);

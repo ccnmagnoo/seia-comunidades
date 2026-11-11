@@ -1,11 +1,13 @@
 import type { Note } from '../domain/note/note';
 import type { Observation } from '../domain/observation/observation';
+import type { ObservationAnnotation } from '../domain/observation/annotation';
 import type { Project } from '../domain/project/project';
 
 export interface DomainEventMap {
   PROJECT_UPSERTED: { project: Project; created: boolean };
   PROJECT_DETAILS_SYNCED: { project: Project };
   OBSERVATION_CLASSIFIED: { observation: Observation };
+  OBSERVATION_ANNOTATED: { annotation: ObservationAnnotation };
   NOTE_SAVED: { note: Note };
   NOTE_REMOVED: { projectId: string; noteId: string };
   DATA_CHANGED: { reason: string; projectId?: string };

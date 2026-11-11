@@ -2,6 +2,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
+import ExcelJS from 'exceljs';
 import { ReportService } from '../src/infrastructure/exporters/report-service';
 import { noopLogger } from '../src/shared/logger';
 import type { ProjectDetail } from '../src/shared/filters';
@@ -69,6 +70,24 @@ const detail: ProjectDetail = {
       keywords: ['turismo', 'paisaje'],
       createdAt: now,
       updatedAt: now,
+      analysis: {
+        schemaVersion: 1,
+        observationId: 'OBS-1',
+        projectId: '2165225291',
+        flagged: true,
+        status: 'relevant',
+        createdAt: now,
+        updatedAt: now,
+        comments: [
+          {
+            id: 'cmt-1',
+            author: 'Carlos Campos',
+            createdAt: now,
+            updatedAt: now,
+            content: 'Revisar afectación paisajística con la Seremi.',
+          },
+        ],
+      },
     },
   ],
   timeline: [
@@ -114,22 +133,37 @@ describe('ReportService', () => {
     const csvContent = await readFile(csv.path, 'utf8');
     expect(csvContent).toContain('"Turismo"');
     expect(csvContent).toContain('"Junta de Vecinos"');
+    expect(csvContent).toContain('"Sí"');
+    expect(csvContent).toContain('"Relevante"');
+    expect(csvContent).toContain('Carlos Campos');
 
     const xlsx = await service.generate(detail, 'xlsx');
     const xlsxBuffer = await readFile(xlsx.path);
     expect(xlsxBuffer.subarray(0, 2).toString()).toBe('PK');
     expect(xlsxBuffer.length).toBeGreaterThan(1000);
 
+    const workbook = new ExcelJS.Workbook();
+    await workbook.xlsx.readFile(xlsx.path);
+    const observationsSheet = workbook.getWorksheet('Observaciones');
+    expect(observationsSheet?.getCell('K1').value).toBe('Marcada');
+    const commentsSheet = workbook.getWorksheet('Comentarios analista');
+    expect(commentsSheet).toBeTruthy();
+    expect(String(commentsSheet?.getCell('E2').value)).toContain('Revisar afectación');
+
     const markdown = await service.generate(detail, 'markdown');
     const md = await readFile(markdown.path, 'utf8');
     expect(md).toContain('# Parque Solar Alicanto');
     expect(md).toContain('## Observaciones ciudadanas');
+    expect(md).toContain('Estado de revisión');
+    expect(md).toContain('Revisar afectación paisajística');
 
     const html = await service.generate(detail, 'html');
     const htmlContent = await readFile(html.path, 'utf8');
     expect(htmlContent).toContain('<!doctype html>');
     expect(htmlContent).toContain('Parque Solar Alicanto');
     expect(htmlContent).toContain('Turismo');
+    expect(htmlContent).toContain('Análisis del analista');
+    expect(htmlContent).toContain('Carlos Campos');
   });
 
   it('rechaza PDF si no hay impresora de escritorio', async () => {

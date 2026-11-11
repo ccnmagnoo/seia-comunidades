@@ -101,6 +101,7 @@ export interface WorkspacePaths {
   projects: string;
   pac: string;
   observations: string;
+  annotations: string;
   notes: string;
   timelines: string;
   catalogs: string;
@@ -134,6 +135,7 @@ export function resolveWorkspacePaths(rootInput: string): WorkspacePaths {
     projects: join(data, 'projects'),
     pac: join(data, 'pac'),
     observations: join(data, 'observations'),
+    annotations: join(data, 'annotations'),
     notes: join(data, 'notes'),
     timelines: join(data, 'timelines'),
     catalogs: join(data, 'catalogs'),
@@ -154,6 +156,7 @@ export function ensureWorkspaceDirs(paths: WorkspacePaths): void {
     paths.projects,
     paths.pac,
     paths.observations,
+    paths.annotations,
     paths.notes,
     paths.timelines,
     paths.catalogs,

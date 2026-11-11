@@ -12,14 +12,16 @@ Vertical slice funcional:
 - Catálogos de regiones, comunas, sectores y estados.
 - Persistencia TOML de proyectos, documentos PAC, observaciones, notas y timeline.
 - Extracción y clasificación inicial de observaciones ciudadanas.
-- Dashboard ejecutivo con KPIs y gráficos.
+- Marcado de observaciones y flujo de revisión: Pendiente, Revisada, Relevante y Descartada.
+- Comentarios internos del analista con autor, historial, edición y eliminación.
+- Dashboard ejecutivo con KPIs y gráficos, incluyendo observaciones marcadas y comentadas.
 - Listado y detalle de expedientes con seguimiento (favorito, crítico, notas).
 - Búsqueda global local con FlexSearch desde la barra lateral.
 - Reportería por proyecto en CSV, XLSX, Markdown, HTML y PDF (Electron `printToPDF`).
 - Tema **Claro / Oscuro / Sistema** persistente, con sincronización del chrome nativo de Electron.
 - IPC tipado entre renderer y proceso principal.
 - Fixtures reales del portal para tests deterministas.
-- 29 tests unitarios/de integración.
+- 33 tests unitarios/de integración.
 - Instalador NSIS y versión portable generados con electron-builder.
 
 Pendiente para completar el MVP:
@@ -38,6 +40,8 @@ Pendiente para completar el MVP:
 ![Detalle de expediente](docs/screenshots/project-detail.png)
 
 ![Observaciones](docs/screenshots/observations.png)
+
+![Análisis del analista](docs/screenshots/observation-comments.png)
 
 ![Búsqueda global](docs/screenshots/global-search.png)
 
@@ -91,6 +95,25 @@ El selector de apariencia está en la barra lateral y en **Configuración**:
 La preferencia se guarda en `localStorage` (`seia.theme`) y se aplica antes del primer paint para evitar destellos. Además, el renderer sincroniza `nativeTheme.themeSource` con Electron para que la barra de título y los diálogos nativos acompañen al tema elegido.
 
 Los colores se definen como tokens semánticos en `src/presentation/astro/styles/global.css` y se consumen con utilidades como `bg-background`, `text-foreground`, `bg-card`, `border-border` y `text-muted-foreground`.
+
+## Análisis de observaciones
+
+Cada observación ciudadana puede:
+
+- Marcarse para seguimiento.
+- Cambiar de estado: **Pendiente**, **Revisada**, **Relevante** o **Descartada**.
+- Recibir múltiples comentarios internos con autor, fecha, edición y eliminación.
+
+Las anotaciones se guardan separadas del dato fuente:
+
+```txt
+data/
+  annotations/
+    {projectId}/
+      {observationId}.toml
+```
+
+Esto evita que una re-sincronización del SEIA sobrescriba el trabajo del analista. Las observaciones marcadas y comentadas se incluyen en el dashboard, el índice de búsqueda y los reportes CSV, XLSX, Markdown, HTML y PDF.
 
 ## Sincronización con el SEIA
 
@@ -169,6 +192,7 @@ data/
   projects/{id}.toml
   pac/{projectId}/{documentId}.toml
   observations/{projectId}/{observationId}.toml
+  annotations/{projectId}/{observationId}.toml
   notes/{projectId}/{noteId}.toml
   timelines/{projectId}.toml
   catalogs/catalogs.toml

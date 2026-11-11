@@ -136,6 +136,9 @@ export class ReportService implements ReportServicePort {
       { header: 'Resumen', key: 'summary', width: 60 },
       { header: 'Contenido', key: 'content', width: 100 },
       { header: 'URL', key: 'url', width: 70 },
+      { header: 'Marcada', key: 'flagged', width: 10 },
+      { header: 'Estado revisión', key: 'reviewStatus', width: 16 },
+      { header: 'Comentarios', key: 'commentsCount', width: 12 },
     ];
     observationsSheet.addRows(
       observations.map((observation) => ({
@@ -149,7 +152,30 @@ export class ReportService implements ReportServicePort {
         summary: observation.summary,
         content: observation.content,
         url: observation.sourceUrl,
+        flagged: observation.analysis?.flagged ? 'Sí' : 'No',
+        reviewStatus: reviewStatusLabel(observation.analysis?.status ?? 'pending'),
+        commentsCount: observation.analysis?.comments.length ?? 0,
       })),
+    );
+
+    const commentsSheet = workbook.addWorksheet('Comentarios analista');
+    commentsSheet.columns = [
+      { header: 'Observación', key: 'observationId', width: 20 },
+      { header: 'Remitente', key: 'sender', width: 34 },
+      { header: 'Autor', key: 'author', width: 24 },
+      { header: 'Fecha', key: 'createdAt', width: 22 },
+      { header: 'Comentario', key: 'content', width: 100 },
+    ];
+    commentsSheet.addRows(
+      observations.flatMap((observation) =>
+        (observation.analysis?.comments ?? []).map((comment) => ({
+          observationId: observation.id,
+          sender: observation.sender,
+          author: comment.author,
+          createdAt: comment.createdAt,
+          content: comment.content,
+        })),
+      ),
     );
 
     const timelineSheet = workbook.addWorksheet('Timeline');
@@ -226,4 +252,14 @@ function slugify(value: string): string {
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
     .slice(0, 48) || 'reporte';
+}
+
+function reviewStatusLabel(status: string): string {
+  const labels: Record<string, string> = {
+    pending: 'Pendiente',
+    reviewed: 'Revisada',
+    relevant: 'Relevante',
+    dismissed: 'Descartada',
+  };
+  return labels[status] ?? status;
 }

@@ -2,6 +2,10 @@ import { z } from 'zod';
 import type { Catalog } from '../../domain/common/catalog';
 import type { Note } from '../../domain/note/note';
 import type { Observation } from '../../domain/observation/observation';
+import type {
+  AnalystComment,
+  ObservationAnnotation,
+} from '../../domain/observation/annotation';
 import type { PacDocument } from '../../domain/pac/pac-document';
 import type { Project, ProjectSummary } from '../../domain/project/project';
 import type { TimelineEvent } from '../../domain/timeline/timeline';
@@ -114,6 +118,27 @@ export const ObservationTomlSchema = z.object({
 });
 
 export type ObservationToml = z.infer<typeof ObservationTomlSchema>;
+
+export const AnalystCommentTomlSchema = z.object({
+  id: z.string(),
+  author: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  content: z.string(),
+});
+
+export const ObservationAnnotationTomlSchema = z.object({
+  schema_version: z.literal(1),
+  observation_id: z.string(),
+  project_id: z.string(),
+  flagged: z.boolean(),
+  status: z.string(),
+  created_at: z.string(),
+  updated_at: z.string(),
+  comments: z.array(AnalystCommentTomlSchema),
+});
+
+export type ObservationAnnotationToml = z.infer<typeof ObservationAnnotationTomlSchema>;
 
 export const NoteTomlSchema = z.object({
   schema_version: z.literal(1),
@@ -354,6 +379,58 @@ export function fromObservationToml(toml: ObservationToml): Observation {
     keywords: toml.keywords.items,
     createdAt: toml.created_at,
     updatedAt: toml.updated_at,
+  };
+}
+
+export function toObservationAnnotationToml(
+  annotation: ObservationAnnotation,
+): ObservationAnnotationToml {
+  return {
+    schema_version: 1,
+    observation_id: annotation.observationId,
+    project_id: annotation.projectId,
+    flagged: annotation.flagged,
+    status: annotation.status,
+    created_at: annotation.createdAt,
+    updated_at: annotation.updatedAt,
+    comments: annotation.comments.map(toAnalystCommentToml),
+  };
+}
+
+export function fromObservationAnnotationToml(
+  toml: ObservationAnnotationToml,
+): ObservationAnnotation {
+  return {
+    schemaVersion: 1,
+    observationId: toml.observation_id,
+    projectId: toml.project_id,
+    flagged: toml.flagged,
+    status: toml.status as ObservationAnnotation['status'],
+    createdAt: toml.created_at,
+    updatedAt: toml.updated_at,
+    comments: toml.comments.map(fromAnalystCommentToml),
+  };
+}
+
+function toAnalystCommentToml(comment: AnalystComment) {
+  return {
+    id: comment.id,
+    author: comment.author,
+    created_at: comment.createdAt,
+    updated_at: comment.updatedAt,
+    content: comment.content,
+  };
+}
+
+function fromAnalystCommentToml(
+  toml: z.infer<typeof AnalystCommentTomlSchema>,
+): AnalystComment {
+  return {
+    id: toml.id,
+    author: toml.author,
+    createdAt: toml.created_at,
+    updatedAt: toml.updated_at,
+    content: toml.content,
   };
 }
 

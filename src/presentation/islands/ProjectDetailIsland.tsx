@@ -17,10 +17,14 @@ import {
   Download,
   ExternalLink,
   FileText,
+  Flag,
   FolderOpen,
   MapPin,
+  MessageSquare,
+  Pencil,
   RefreshCw,
   Save,
+  Send,
   Star,
   Trash2,
   Users,
@@ -28,7 +32,10 @@ import {
 } from 'lucide-react';
 import type { Note } from '@/domain/note/note';
 import type { NotePriority } from '@/domain/common/schemas';
-import type { Observation } from '@/domain/observation/observation';
+import type {
+  ObservationReviewStatus,
+  ObservationView,
+} from '@/domain/observation/annotation';
 import type { PacDocument } from '@/domain/pac/pac-document';
 import type { Project } from '@/domain/project/project';
 import type { TimelineEvent } from '@/domain/timeline/timeline';
@@ -56,6 +63,7 @@ import {
 import { getApi } from '../lib/api';
 import { queryClient, queryKeys } from '../lib/query-client';
 import {
+  cn,
   formatInt,
   formatMoney,
   formatRelative,
@@ -65,6 +73,8 @@ import {
 } from '../lib/utils';
 import {
   kindVariant,
+  reviewStatusLabel,
+  reviewStatusVariant,
   sentimentVariant,
   statusVariant,
   timelineLabel,
@@ -272,7 +282,9 @@ function ProjectDetailContent() {
 
       {tab === 'resumen' ? <SummaryTab project={project} projectId={projectId} /> : null}
       {tab === 'pac' ? <PacTab documents={pac} /> : null}
-      {tab === 'observaciones' ? <ObservationsTab observations={observations} /> : null}
+      {tab === 'observaciones' ? (
+        <ObservationsTab projectId={projectId} observations={observations} />
+      ) : null}
       {tab === 'timeline' ? <TimelineTab events={timeline} /> : null}
       {tab === 'notas' ? <NotesTab projectId={projectId} notes={notes} /> : null}
     </div>
@@ -499,7 +511,19 @@ function PacTab({ documents }: { documents: PacDocument[] }) {
   );
 }
 
-function ObservationsTab({ observations }: { observations: Observation[] }) {
+type ObservationFilter = 'all' | 'flagged' | 'commented';
+
+function ObservationsTab({
+  projectId,
+  observations,
+}: {
+  projectId: string;
+  observations: ObservationView[];
+}) {
+  const [filter, setFilter] = useState<ObservationFilter>('all');
+  const [statusFilter, setStatusFilter] = useState<'all' | ObservationReviewStatus>('all');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+
   if (observations.length === 0) {
     return (
       <EmptyState
@@ -509,56 +533,396 @@ function ObservationsTab({ observations }: { observations: Observation[] }) {
     );
   }
 
+  const flaggedCount = observations.filter((observation) => observation.analysis?.flagged).length;
+  const commentedCount = observations.filter(
+    (observation) => (observation.analysis?.comments.length ?? 0) > 0,
+  ).length;
+
+  const filtered = observations.filter((observation) => {
+    const analysis = observation.analysis;
+    if (filter === 'flagged' && !analysis?.flagged) return false;
+    if (filter === 'commented' && (analysis?.comments.length ?? 0) === 0) return false;
+    if (statusFilter !== 'all' && (analysis?.status ?? 'pending') !== statusFilter) return false;
+    return true;
+  });
+
   return (
-    <div className="grid gap-4 xl:grid-cols-2">
-      {observations.map((observation) => (
-        <Card key={observation.id}>
-          <CardContent className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap items-center gap-2">
-                <Badge variant="violet">{observation.category}</Badge>
-                <Badge variant={sentimentVariant(observation.sentiment)}>
-                  {sentimentLabel(observation.sentiment)}
-                </Badge>
-              </div>
-              <span className="text-[11px] text-muted-foreground">{formatDate(observation.date)}</span>
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button
+          variant={filter === 'all' ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={() => setFilter('all')}
+        >
+          Todas ({observations.length})
+        </Button>
+        <Button
+          variant={filter === 'flagged' ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={() => setFilter('flagged')}
+        >
+          <Flag className="h-3.5 w-3.5" />
+          Marcadas ({flaggedCount})
+        </Button>
+        <Button
+          variant={filter === 'commented' ? 'secondary' : 'ghost'}
+          size="sm"
+          onClick={() => setFilter('commented')}
+        >
+          <MessageSquare className="h-3.5 w-3.5" />
+          Con comentarios ({commentedCount})
+        </Button>
+        <Select
+          className="ml-auto h-8 w-44 text-xs"
+          value={statusFilter}
+          onChange={(event) =>
+            setStatusFilter(event.target.value as 'all' | ObservationReviewStatus)
+          }
+        >
+          <option value="all">Todos los estados</option>
+          <option value="pending">Pendiente</option>
+          <option value="reviewed">Revisada</option>
+          <option value="relevant">Relevante</option>
+          <option value="dismissed">Descartada</option>
+        </Select>
+      </div>
+
+      {filtered.length === 0 ? (
+        <EmptyState
+          title="Sin observaciones con este filtro"
+          description="Cambia el filtro o limpia los criterios para volver a ver todas las observaciones."
+          action={
+            <Button
+              variant="secondary"
+              onClick={() => {
+                setFilter('all');
+                setStatusFilter('all');
+              }}
+            >
+              Limpiar filtros
+            </Button>
+          }
+        />
+      ) : (
+        <div className="grid gap-4 xl:grid-cols-2">
+          {filtered.map((observation) => (
+            <ObservationCard
+              key={observation.id}
+              projectId={projectId}
+              observation={observation}
+              expanded={expandedId === observation.id}
+              onToggle={() =>
+                setExpandedId((current) =>
+                  current === observation.id ? null : observation.id,
+                )
+              }
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ObservationCard({
+  projectId,
+  observation,
+  expanded,
+  onToggle,
+}: {
+  projectId: string;
+  observation: ObservationView;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  const api = getApi();
+  const client = useQueryClient();
+  const [author, setAuthor] = useState('Operador local');
+  const [content, setContent] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingContent, setEditingContent] = useState('');
+
+  const analysis = observation.analysis;
+  const comments = analysis?.comments ?? [];
+  const status = analysis?.status ?? 'pending';
+  const flagged = analysis?.flagged ?? false;
+
+  const invalidate = () => {
+    void client.invalidateQueries({ queryKey: queryKeys.project(projectId) });
+    void client.invalidateQueries({ queryKey: ['projects'] });
+    void client.invalidateQueries({ queryKey: ['dashboard'] });
+  };
+
+  const updateAnalysis = useMutation({
+    mutationFn: (patch: { flagged?: boolean; status?: ObservationReviewStatus }) =>
+      api.observations.updateAnalysis(projectId, observation.id, patch),
+    onSuccess: invalidate,
+  });
+
+  const addComment = useMutation({
+    mutationFn: () =>
+      api.observations.addComment({
+        projectId,
+        observationId: observation.id,
+        author,
+        content,
+      }),
+    onSuccess: () => {
+      setContent('');
+      invalidate();
+    },
+  });
+
+  const editComment = useMutation({
+    mutationFn: (commentId: string) =>
+      api.observations.updateComment({
+        projectId,
+        observationId: observation.id,
+        commentId,
+        content: editingContent,
+      }),
+    onSuccess: () => {
+      setEditingId(null);
+      setEditingContent('');
+      invalidate();
+    },
+  });
+
+  const deleteComment = useMutation({
+    mutationFn: (commentId: string) =>
+      api.observations.deleteComment({
+        projectId,
+        observationId: observation.id,
+        commentId,
+      }),
+    onSuccess: invalidate,
+  });
+
+  const mutationError =
+    updateAnalysis.error ?? addComment.error ?? editComment.error ?? deleteComment.error;
+
+  return (
+    <Card>
+      <CardContent className="space-y-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge variant="violet">{observation.category}</Badge>
+            <Badge variant={sentimentVariant(observation.sentiment)}>
+              {sentimentLabel(observation.sentiment)}
+            </Badge>
+            {flagged ? (
+              <Badge variant="amber">
+                <Flag className="h-2.5 w-2.5 fill-warning" />
+                Marcada
+              </Badge>
+            ) : null}
+            <Badge variant={reviewStatusVariant(status)}>{reviewStatusLabel(status)}</Badge>
+          </div>
+          <span className="text-[11px] text-muted-foreground">{formatDate(observation.date)}</span>
+        </div>
+
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-sm font-medium text-foreground">{observation.sender}</p>
+            <p className="text-[11px] text-muted-foreground/70">{observation.subject}</p>
+          </div>
+          <div className="flex items-center gap-1">
+            <Select
+              className="h-7 w-32 text-[11px]"
+              value={status}
+              onChange={(event) =>
+                updateAnalysis.mutate({
+                  status: event.target.value as ObservationReviewStatus,
+                })
+              }
+            >
+              <option value="pending">Pendiente</option>
+              <option value="reviewed">Revisada</option>
+              <option value="relevant">Relevante</option>
+              <option value="dismissed">Descartada</option>
+            </Select>
+            <Button
+              variant={flagged ? 'secondary' : 'ghost'}
+              size="icon"
+              title={flagged ? 'Quitar marca' : 'Marcar para seguimiento'}
+              aria-label={flagged ? 'Quitar marca' : 'Marcar para seguimiento'}
+              onClick={() => updateAnalysis.mutate({ flagged: !flagged })}
+            >
+              <Flag
+                className={cn('h-4 w-4', flagged && 'fill-warning text-warning')}
+              />
+            </Button>
+          </div>
+        </div>
+
+        <p className="line-clamp-5 whitespace-pre-line text-sm leading-6 text-muted-foreground">
+          {observation.content || observation.summary || 'Sin texto extraído.'}
+        </p>
+
+        <div>
+          <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground/70">
+            <span>Importancia</span>
+            <span>{Math.round(observation.importance * 100)}%</span>
+          </div>
+          <div className="h-1.5 overflow-hidden rounded-full bg-accent">
+            <div
+              className="h-full rounded-full bg-gradient-to-r from-primary to-violet"
+              style={{ width: `${Math.round(observation.importance * 100)}%` }}
+            />
+          </div>
+        </div>
+
+        {observation.keywords.length > 0 ? (
+          <div className="flex flex-wrap gap-1.5">
+            {observation.keywords.map((keyword) => (
+              <Badge key={keyword} variant="slate">
+                {keyword}
+              </Badge>
+            ))}
+          </div>
+        ) : null}
+
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <Button variant="ghost" size="sm" onClick={() => openExternal(observation.sourceUrl)}>
+            <ExternalLink className="h-3.5 w-3.5" />
+            Ver documento original
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onToggle}>
+            <MessageSquare className="h-3.5 w-3.5" />
+            Análisis del analista ({comments.length})
+          </Button>
+        </div>
+
+        {expanded ? (
+          <div className="space-y-3 rounded-xl border border-border bg-muted/20 p-3">
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.16em] text-muted-foreground">
+                Comentarios internos
+              </p>
+              <span className="text-[10px] text-muted-foreground/70">
+                No forman parte del expediente SEIA
+              </span>
             </div>
-            <div>
-              <p className="text-sm font-medium text-foreground">{observation.sender}</p>
-              <p className="text-[11px] text-muted-foreground/70">{observation.subject}</p>
-            </div>
-            <p className="line-clamp-5 whitespace-pre-line text-sm leading-6 text-muted-foreground">
-              {observation.content || observation.summary || 'Sin texto extraído.'}
-            </p>
-            <div>
-              <div className="mb-1 flex items-center justify-between text-[10px] uppercase tracking-wider text-muted-foreground/70">
-                <span>Importancia</span>
-                <span>{Math.round(observation.importance * 100)}%</span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-accent">
-                <div
-                  className="h-full rounded-full bg-gradient-to-r from-primary to-violet"
-                  style={{ width: `${Math.round(observation.importance * 100)}%` }}
-                />
-              </div>
-            </div>
-            {observation.keywords.length > 0 ? (
-              <div className="flex flex-wrap gap-1.5">
-                {observation.keywords.map((keyword) => (
-                  <Badge key={keyword} variant="slate">
-                    {keyword}
-                  </Badge>
+
+            {comments.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                Aún no hay comentarios del analista para esta observación.
+              </p>
+            ) : (
+              <div className="space-y-2">
+                {[...comments].reverse().map((comment) => (
+                  <div
+                    key={comment.id}
+                    className="rounded-xl border border-border bg-card/70 p-3"
+                  >
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-medium text-foreground">{comment.author}</span>
+                        <span className="text-[10px] text-muted-foreground">
+                          {formatDateTime(comment.createdAt)}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Editar comentario"
+                          onClick={() => {
+                            setEditingId(comment.id);
+                            setEditingContent(comment.content);
+                          }}
+                        >
+                          <Pencil className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          title="Eliminar comentario"
+                          onClick={() => {
+                            if (window.confirm('¿Eliminar este comentario?')) {
+                              deleteComment.mutate(comment.id);
+                            }
+                          }}
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {editingId === comment.id ? (
+                      <div className="mt-2 space-y-2">
+                        <Textarea
+                          rows={3}
+                          value={editingContent}
+                          onChange={(event) => setEditingContent(event.target.value)}
+                        />
+                        <div className="flex justify-end gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => {
+                              setEditingId(null);
+                              setEditingContent('');
+                            }}
+                          >
+                            Cancelar
+                          </Button>
+                          <Button
+                            size="sm"
+                            loading={editComment.isPending}
+                            disabled={!editingContent.trim()}
+                            onClick={() => editComment.mutate(comment.id)}
+                          >
+                            Guardar
+                          </Button>
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="mt-1 whitespace-pre-line text-sm leading-6 text-muted-foreground">
+                        {comment.content}
+                      </p>
+                    )}
+                  </div>
                 ))}
               </div>
+            )}
+
+            <div className="space-y-2 rounded-xl border border-dashed border-border bg-background/40 p-3">
+              <div className="grid gap-2 sm:grid-cols-[160px_1fr]">
+                <Input
+                  value={author}
+                  onChange={(event) => setAuthor(event.target.value)}
+                  placeholder="Autor"
+                  aria-label="Autor del comentario"
+                />
+                <Textarea
+                  rows={3}
+                  value={content}
+                  onChange={(event) => setContent(event.target.value)}
+                  placeholder="Agregar análisis, seguimiento o comentario interno…"
+                  aria-label="Comentario del analista"
+                />
+              </div>
+              <div className="flex justify-end">
+                <Button
+                  size="sm"
+                  loading={addComment.isPending}
+                  disabled={!content.trim() || !author.trim()}
+                  onClick={() => addComment.mutate()}
+                >
+                  <Send className="h-3.5 w-3.5" />
+                  Agregar comentario
+                </Button>
+              </div>
+            </div>
+
+            {mutationError ? (
+              <Alert tone="error">{mutationError.message}</Alert>
             ) : null}
-            <Button variant="ghost" size="sm" onClick={() => openExternal(observation.sourceUrl)}>
-              <ExternalLink className="h-3.5 w-3.5" />
-              Ver documento original
-            </Button>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
+          </div>
+        ) : null}
+      </CardContent>
+    </Card>
   );
 }
 
